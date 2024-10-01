@@ -50,8 +50,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
   return (
     <WidgetWrapper>
-
-//dong 1
+      {/* //dong 1 */}
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"
@@ -81,7 +80,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-//dong 2
+{/* //dong 2 */}
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
           <LocationOnOutlined fontSize="large" sx={{ color: main }} />
@@ -95,7 +94,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-//dong 3
+{/* //dong 3 */}
       <Box p="1rem 0">
         <FlexBetween mb="0.5rem">
           <Typography color={medium}>Who's viewed your profile</Typography>
@@ -113,7 +112,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-//dong 4
+{/* //dong 4 */}
       <Box p="1rem 0">
         <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
           Other Profiles
@@ -131,7 +130,7 @@ const UserWidget = ({ userId, picturePath }) => {
           </FlexBetween>
           <EditOutlined sx={{ color: main }} />
         </FlexBetween>
-//test icon. no need now
+{/* //test icon. no need now */}
         {/* <FlexBetween gap="1rem">
           <FlexBetween gap="1rem">
             <img src="../assets/linkedin.png" alt="linkedin" />

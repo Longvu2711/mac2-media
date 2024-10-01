@@ -6,7 +6,7 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       email,
-      password, // Lưu mật khẩu dạng plain text
+      password, 
       picturePath,
       friends,
       location,
@@ -17,8 +17,8 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       email,
-      password, // Không mã hóa mật khẩu
-      picturePath,
+      password, 
+      picturePath, 
       friends,
       location,
       occupation,
@@ -40,7 +40,6 @@ export const login = async (req, res) => {
 
     if (!user) return res.status(400).json({ msg: "User does not exist." });
 
-    // Kiểm tra mật khẩu trực tiếp mà không so sánh mã băm
     if (password !== user.password) {
       return res.status(400).json({ msg: "Invalid credentials." });
     }
