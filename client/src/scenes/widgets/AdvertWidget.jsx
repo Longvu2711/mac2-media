@@ -12,15 +12,14 @@ const AdvertWidget = () => {
     <WidgetWrapper>
       <FlexBetween>
         <Typography color={dark} variant="h5" fontWeight="500">
-          Sponsored
+        Advertisement
         </Typography>
-        <Typography color={medium}>Create Ad</Typography>
       </FlexBetween>
       <img
         width="100%"
         height="auto"
         alt="advert"
-        src="http://localhost:8080/assets/info4.jpeg"
+        src="http://localhost:8080/assets/car.gif"
         style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
       />
       <FlexBetween>
