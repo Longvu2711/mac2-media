@@ -27,9 +27,10 @@ const HomePage = () => {
             isNonMobileScreens
               ? {
                   position: "sticky",
-                  top: "10rem", // Adjust this based on your layout
+                  top: "10rem", 
                 }
-              : {}
+              : {
+              }
           }
         >
           <UserWidget userId={_id} picturePath={picturePath} />
@@ -42,7 +43,7 @@ const HomePage = () => {
           <MyPostWidget picturePath={picturePath} />
           <PostsWidget userId={_id} />
         </Box>
-        
+      
         {isNonMobileScreens && (
           <Box flexBasis="26%">
             <AdvertWidget />
