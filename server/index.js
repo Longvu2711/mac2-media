@@ -15,6 +15,8 @@ import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
+import adminRoutes from "./routes/admin.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,6 +49,8 @@ app.post("/posts",upload.single("picture"), createPost);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/admin", adminRoutes);
+
 
 const PORT = process.env.PORT || 8081;
 mongoose
