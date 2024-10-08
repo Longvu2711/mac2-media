@@ -3,25 +3,11 @@ import User from "../models/User.js";
 export const register = async (req, res) => {
   try {
     const {
-      firstName,
-      lastName,
-      email,
-      password, 
-      picturePath,
-      friends,
-      location,
-      occupation,
+      firstName,lastName,email,password, picturePath,friends,location,occupation,
     } = req.body;
 
     const newUser = new User({
-      firstName,
-      lastName,
-      email,
-      password, 
-      picturePath, 
-      friends,
-      location,
-      occupation,
+      firstName,lastName,email,password, picturePath,friends,location,occupation,
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
     });
@@ -32,6 +18,8 @@ export const register = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
 
 export const login = async (req, res) => {
   try {
@@ -52,3 +40,5 @@ export const login = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+

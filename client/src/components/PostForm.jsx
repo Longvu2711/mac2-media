@@ -20,16 +20,14 @@ const PostForm = () => {
     getPost();
   }, [id]);
 
-  // Xử lý sự thay đổi ủa các input
   const handleChange = (e) => {
     setPost({ ...post, [e.target.name]: e.target.value });
   };
 
-  // Xử lý khi nhấn nút Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updatePost(id, post); // Gửi yêu cầu cập nhật bài viết
-    navigate("/admin"); // Điều hướng về trang admin sau khi cập nhật
+    await updatePost(id, post); 
+    navigate("/admin"); 
   };
 
   return (
