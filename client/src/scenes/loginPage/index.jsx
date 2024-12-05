@@ -12,8 +12,8 @@ const LoginPage = () => {
         p="1rem 6%"
         textAlign="center"
       >
-        <Typography fontWeight="bold" fontSize="32px" color="primary">
-          Social Media App Hehe
+        <Typography fontWeight="bold" fontSize="32px" color="red">
+          V Social Media App Hehe
         </Typography>
       </Box>
 
@@ -25,7 +25,7 @@ const LoginPage = () => {
         backgroundColor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-            Welcome to Social Media 
+            Welcome to V Social Media 
         </Typography>
         <Form />
       </Box>

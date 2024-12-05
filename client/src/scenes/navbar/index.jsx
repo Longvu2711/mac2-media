@@ -49,7 +49,7 @@ const Navbar = () => {
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="primary"
+          color="#550101"
           onClick={() => navigate("/home")}
           sx={{
             "&:hover": {
@@ -58,7 +58,7 @@ const Navbar = () => {
             },
           }}
         >
-          Social Media
+          V Social Media
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween

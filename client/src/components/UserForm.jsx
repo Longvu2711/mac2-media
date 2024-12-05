@@ -13,7 +13,6 @@ const UserForm = () => {
     occupation: "",
   });
 
-  // Lấy thông tin người dùng khi component được render
   useEffect(() => {
     const getUser = async () => {
       const data = await fetchUserById(id);
