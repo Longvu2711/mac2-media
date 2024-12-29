@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 import { Box, Typography, useTheme } from "@mui/material";
+import WidgetWrapper from "components/WidgetWrapper";
+import FlexBetween from "components/FlexBetween";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -49,15 +51,14 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       {sortedPosts.length === 0 ? (
         <Box
           sx={{
-            padding: "20px", // Thêm padding 20px
-            border: "2px solid #ccc", // Viền màu xám nhạt
-            borderRadius: "10px", // Góc bo tròn
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Tạo bóng nhẹ
+            padding: "0px", 
           }}
         >
+          <WidgetWrapper m="2rem 0">
           <Typography color={medium} fontSize="2rem">
-            No posts yet.
+            Chưa có bài đăng nào. Hãy thử lại sau nhé...
           </Typography>
+          </WidgetWrapper>
         </Box>
       ) : (
         sortedPosts.map(

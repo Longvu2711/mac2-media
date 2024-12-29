@@ -12,6 +12,8 @@ const PostForm = () => {
     description: "",
   });
 
+
+  
   useEffect(() => {
     const getPost = async () => {
       const data = await fetchPostById(id);

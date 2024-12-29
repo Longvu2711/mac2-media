@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
 import {
   Box,
   IconButton,
@@ -27,7 +26,6 @@ import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 
 const Navbar = () => {
-
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,7 +36,7 @@ const Navbar = () => {
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
+  const primaryLight = theme.palette.primary.dark;
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
@@ -46,20 +44,37 @@ const Navbar = () => {
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
-        <Typography
-          fontWeight="bold"
-          fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="#550101"
-          onClick={() => navigate("/home")}
-          sx={{
-            "&:hover": {
-              color: primaryLight,
-              cursor: "pointer",
-            },
-          }}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center" // Căn giữa cả ảnh và chữ
+          gap="1rem" // Khoảng cách giữa ảnh và chữ
         >
-          V Social Media
-        </Typography>
+          <Box
+            component="img"
+            src="http://localhost:3000/lotus.png"
+            alt="zalo gif"
+            sx={{
+              width: "2.25rem", 
+              height: "2.25rem", 
+              objectFit: "cover",
+            }}
+          />
+          <Typography
+            fontWeight="bold"
+            fontSize="2.25rem" 
+            color="primary"
+            onClick={() => navigate("/home")}
+            sx={{
+              "&:hover": {
+                color: primaryLight,
+                cursor: "pointer",
+              },
+            }}
+          >
+            V Social Media
+          </Typography>
+        </Box>
         {isNonMobileScreens && (
           <FlexBetween
             backgroundColor={neutralLight}
@@ -67,7 +82,7 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search..." />
+            <InputBase placeholder="Tìm kiếm gì đó..." />
             <IconButton>
               <Search />
             </IconButton>
@@ -109,7 +124,9 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              <MenuItem onClick={() => dispatch(setLogout())}>
+                Đăng xuất
+              </MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>
@@ -185,7 +202,7 @@ const Navbar = () => {
                   <Typography>{fullName}</Typography>
                 </MenuItem>
                 <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
+                  Đăng xuất
                 </MenuItem>
               </Select>
             </FormControl>

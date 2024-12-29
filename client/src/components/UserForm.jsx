@@ -3,7 +3,7 @@ import { fetchUserById, updateUser } from "../services/userService";
 import { useParams, useNavigate } from "react-router-dom";
 
 const UserForm = () => {
-  const { id } = useParams(); // lấy id từ URL
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const [user, setUser] = useState({
     firstName: "",
@@ -21,16 +21,14 @@ const UserForm = () => {
     getUser();
   }, [id]);
 
-  // Xử lý sự thay đổi của các input
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  // Xử lý khi nhấn nút Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateUser(id, user); // Gửi yêu cầu cập nhật thông tin
-    navigate("/admin"); // Điều hướng về trang admin sau khi cập nhật
+    await updateUser(id, user);
+    navigate("/admin"); 
   };
 
   return (

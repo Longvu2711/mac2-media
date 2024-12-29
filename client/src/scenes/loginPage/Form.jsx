@@ -17,18 +17,18 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
-  location: yup.string().required("required"),
-  occupation: yup.string().required("required"),
-  picture: yup.string().required("required"),
+  firstName: yup.string().required("Không được để trống"),
+  lastName: yup.string().required("Không được để trống"),
+  email: yup.string().email("Email không tồn tại!!").required("Không được để trống"),
+  password: yup.string().required("Không được để trống"),
+  location: yup.string().required("Không được để trống"),
+  occupation: yup.string().required("Không được để trống"),
+  picture: yup.string().required("Không được để trống"),
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  email: yup.string().email("Email không tồn tại").required("Không được để trống email"),
+  password: yup.string().required("Không được để trống"),
 });
 
 const initialValuesRegister = {
@@ -129,7 +129,7 @@ const Form = () => {
             {isRegister && (
               <>
                 <TextField
-                  label="First Name"
+                  label="Tên"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.firstName}
@@ -141,7 +141,7 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
-                  label="Last Name"
+                  label="Họ"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.lastName}
@@ -151,7 +151,7 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
-                  label="Location"
+                  label="Vị trí - địa chỉ"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.location}
@@ -161,7 +161,7 @@ const Form = () => {
                   sx={{ gridColumn: "span 4" }}
                 />
                 <TextField
-                  label="Occupation"
+                  label="Nghề nghiệp"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.occupation}
@@ -195,7 +195,7 @@ const Form = () => {
                         <input {...getInputProps()} />
                         {!values.picture ? (
                           <p>
-                            Add Picture Here (default picture )
+                            Chọn ảnh hoặc kéo thả vào đây
                           </p>
                         ) : (
                           <FlexBetween>
@@ -221,7 +221,7 @@ const Form = () => {
               sx={{ gridColumn: "span 4" }}
             />
             <TextField
-              label="Password"
+              label="Mật khẩu"
               type="password"
               onBlur={handleBlur}
               onChange={handleChange}
@@ -246,7 +246,7 @@ const Form = () => {
                 "&:hover": { color: palette.primary.main },
               }}
             >
-              {isLogin ? "LOGIN" : "REGISTER"}
+              {isLogin ? "ĐĂNG NHẬP" : "ĐĂNG KÝ"}
             </Button>
             <Typography
               onClick={() => {
@@ -262,8 +262,24 @@ const Form = () => {
                 },
               }}
             >
-              {isLogin ? "Sign Up here." : "Login here."}
+              {isLogin ? "Bạn chưa có tài khoản? Đăng ký tại đây." : "Trở lại trang đăng nhập."}
             </Typography>
+            {isLogin && (
+              <Typography
+                onClick={() => navigate('/admin')}
+                sx={{
+                  textDecoration: "underline",
+                  color: palette.primary.main,
+                  "&:hover": {
+                    cursor: "pointer",
+                    color: palette.primary.light,
+                  },
+                  marginTop: "10px",
+                }}
+              >
+                Admin Page
+              </Typography>
+            )}
           </Box>
         </form>
       )}

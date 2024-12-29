@@ -12,23 +12,22 @@ const AdvertWidget = () => {
     <WidgetWrapper>
       <FlexBetween>
         <Typography color={dark} variant="h5" fontWeight="500">
-        Advertisement
+        Banner quảng cáo
         </Typography>
       </FlexBetween>
       <img
         width="100%"
         height="auto"
         alt="advert"
-        src="http://localhost:8080/assets/car.gif"
+        src="http://localhost:8080/assets/zalo.gif"
         style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
       />
       <FlexBetween>
-        <Typography color={main}>advertisement</Typography>
-        <Typography color={medium}>advertisement.com</Typography>
+        <Typography color={main}>Ứng dụng nhắn tin</Typography>
+        <Typography color={medium}>Zalo Việt Nam</Typography>
       </FlexBetween>
       <Typography color={medium} m="0.5rem 0">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. In quae beatae non voluptate, culpa, blanditiis ullam laudantium dolorem reiciendis repudiandae expedita obcaecati. Qui ipsum quia mollitia fugit animi ex quo?
-        this is advertisement!!
+      Zalo là một ứng dụng nhắn tin nhanh đa nền tảng được phát triển bởi công ty VNG ở Việt Nam. Ngoài Việt Nam, ứng dụng này còn được sử dụng tại các quốc gia như Hoa Kỳ, Nhật Bản, Hàn Quốc, Úc, Đức, Myanmar và Singapore.
       </Typography>
     </WidgetWrapper>
   );

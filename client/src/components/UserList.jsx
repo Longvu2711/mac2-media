@@ -20,7 +20,7 @@ const UserList = () => {
 
   const handleDelete = async (id) => {
     await deleteUser(id);
-    setUsers(users.filter((user) => user._id !== id)); // Remove deleted user from the list
+    setUsers(users.filter((user) => user._id !== id)); 
   };
 
   return (

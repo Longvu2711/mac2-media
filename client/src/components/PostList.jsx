@@ -18,7 +18,7 @@ const PostList = () => {
 
   const handleDelete = async (id) => {
     await deletePost(id);
-    setPosts(posts.filter((post) => post._id !== id)); // Remove deleted post from the list
+    setPosts(posts.filter((post) => post._id !== id)); 
   };
 
   return (

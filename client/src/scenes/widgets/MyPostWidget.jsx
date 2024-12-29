@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 
 const MyPostWidget = ({ picturePath }) => {
+  
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
@@ -62,7 +63,7 @@ const MyPostWidget = ({ picturePath }) => {
       <FlexBetween gap="1.5rem">
         <UserImage image={picturePath} />
         <InputBase
-          placeholder="What's on your mind..."
+          placeholder="Bạn muốn viết gì đó không?..."
           onChange={(e) => setPost(e.target.value)}
           value={post}
           sx={{
@@ -81,7 +82,7 @@ const MyPostWidget = ({ picturePath }) => {
           p="1rem"
         >
           <Dropzone
-            acceptedFiles=".jpg,.jpeg,.png"
+            acceptedFiles=".jpg,.jpeg,.png,.gif,.mp4,.mp3"
             multiple={false}
             onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
           >
@@ -96,7 +97,7 @@ const MyPostWidget = ({ picturePath }) => {
                 >
                   <input {...getInputProps()} />
                   {!image ? (
-                    <p>Add Image Here</p>
+                    <p>Chọn ảnh hoặc kéo thả vào đây</p>
                   ) : (
                     <FlexBetween>
                       <Typography>{image.name}</Typography>
@@ -117,9 +118,7 @@ const MyPostWidget = ({ picturePath }) => {
           </Dropzone>
         </Box>
       )}
-
       <Divider sx={{ margin: "1.25rem 0" }} />
-
       <FlexBetween>
         <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
           <ImageOutlined sx={{ color: mediumMain }} />
@@ -127,7 +126,7 @@ const MyPostWidget = ({ picturePath }) => {
             color={mediumMain}
             sx={{ "&:hover": { cursor: "pointer", color: medium } }}
           >
-            Image
+            Ảnh
           </Typography>
         </FlexBetween>
 
@@ -138,14 +137,14 @@ const MyPostWidget = ({ picturePath }) => {
               <Typography color={mediumMain}>Clip</Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem">
+            {/* <FlexBetween gap="0.25rem">
               <AttachFileOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Attachment</Typography>
-            </FlexBetween>
+              <Typography color={mediumMain}>Đính kèm tệp</Typography>
+            </FlexBetween> */}
 
             <FlexBetween gap="0.25rem">
               <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Audio</Typography>
+              <Typography color={mediumMain}>Âm thanh</Typography>
             </FlexBetween>
           </>
         ) : (
@@ -155,15 +154,15 @@ const MyPostWidget = ({ picturePath }) => {
         )}
 
         <Button
-          disabled={!post}
+          disabled={!post && !image}
           onClick={handlePost}
           sx={{
-            color: palette.background.alt,
+            color: palette.background.default,
             backgroundColor: palette.primary.main,
             borderRadius: "3rem",
           }}
         >
-          POST
+          Đăng tin
         </Button>
       </FlexBetween>
     </WidgetWrapper>

@@ -65,14 +65,14 @@ const UserWidget = ({ userId, picturePath }) => {
               fontWeight="500"
               sx={{
                 "&:hover": {
-                  color: palette.primary.light,
+                  color: palette.primary.dark,
                   cursor: "pointer",
                 },
               }}
             >
               {firstName} {lastName}
             </Typography>
-            <Typography color={medium}>{friends.length} friends</Typography>
+            <Typography color={medium}>{friends.length} Bạn bè</Typography>
           </Box>
         </FlexBetween>
         <ManageAccountsOutlined />
@@ -94,17 +94,16 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-{/* //dong 3 */}
-{/* test  */}
+
       <Box p="1rem 0">
         <FlexBetween mb="0.5rem">
-          <Typography color={medium}>Who's viewed your profile</Typography>
+          <Typography color={medium}>Tổng số tương tác</Typography>
           <Typography color={main} fontWeight="500">
             {viewedProfile}
           </Typography>
         </FlexBetween>
         <FlexBetween>
-          <Typography color={medium}>Impressions of your post</Typography>
+          <Typography color={medium}>Tổng số like nhận được</Typography>
           <Typography color={main} fontWeight="500">
             {impressions}
           </Typography>
@@ -117,21 +116,47 @@ const UserWidget = ({ userId, picturePath }) => {
 {/* test icon  */}
       <Box p="1rem 0">
         <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
-          Other Profiles
+          Các tài khoản khác
         </Typography>
 
         <FlexBetween gap="1rem" mb="0.5rem">
           <FlexBetween gap="1rem">
-            <img src="../assets/twitter.png" alt="twitter" />
+            <img src="../assets/X.png" alt="twitter" />
             <Box>
               <Typography color={main} fontWeight="500">
-                Twitter
+                X
               </Typography>
               <Typography color={medium}>Social Network</Typography>
             </Box>
           </FlexBetween>
           <EditOutlined sx={{ color: main }} />
         </FlexBetween>
+        <FlexBetween gap="1rem" mb="0.5rem">
+          <FlexBetween gap="1rem">
+            <img src="../assets/zalo.png" alt="zalo" />
+            <Box>
+              <Typography color={main} fontWeight="500">
+                Zalo
+              </Typography>
+              <Typography color={medium}>Social Network</Typography>
+            </Box>
+          </FlexBetween>
+          <EditOutlined sx={{ color: main }} />
+        </FlexBetween>
+
+        <FlexBetween gap="1rem" mb="0.5rem">
+          <FlexBetween gap="1rem">
+            <img src="../assets/facebook.png" alt="zalo" />
+            <Box>
+              <Typography color={main} fontWeight="500">
+                Facebook
+              </Typography>
+              <Typography color={medium}>Social Network</Typography>
+            </Box>
+          </FlexBetween>
+          <EditOutlined sx={{ color: main }} />
+        </FlexBetween>
+
 {/* //test icon. no need now */}
         {/* <FlexBetween gap="1rem">
           <FlexBetween gap="1rem">
