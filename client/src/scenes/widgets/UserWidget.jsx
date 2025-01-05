@@ -50,7 +50,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
   return (
     <WidgetWrapper>
-      {/* //dong 1 */}
+
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"

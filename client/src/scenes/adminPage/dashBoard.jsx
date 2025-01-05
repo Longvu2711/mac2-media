@@ -72,6 +72,28 @@ const Dashboard = () => {
       handleSearch();
     }
   };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await fetch(`http://localhost:8080/admin/user/${userId}`, {
+        method: 'DELETE',
+      });
+      setUsers(users.filter(user => user._id !== userId));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      await fetch(`http://localhost:8080/admin/post/${postId}`, {
+        method: 'DELETE',
+      });
+      setPosts(posts.filter(post => post._id !== postId));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
   
   return (
     <Box
@@ -104,6 +126,7 @@ const Dashboard = () => {
                 <TableCell>Hồ sơ đã xem</TableCell>
                 <TableCell>Số lượt tương tác</TableCell>
                 <TableCell>Ngày tạo</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -113,12 +136,19 @@ const Dashboard = () => {
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.picturePath}</TableCell>
+                  <TableCell>
+                    <img src={user.picturePath} alt="User" style={{ width: '100px', height: '100px' }} />
+                  </TableCell>
                   <TableCell>{user.location}</TableCell>
                   <TableCell>{user.occupation}</TableCell>
                   <TableCell>{user.viewedProfile}</TableCell>
                   <TableCell>{user.impressions}</TableCell>
                   <TableCell>{new Date(user.createdAt).toLocaleString("vi-VN")}</TableCell>
+                  <TableCell>
+                    <Button variant="contained" color="secondary" onClick={() => handleDeleteUser(user._id)}>
+                      Delete
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -140,6 +170,7 @@ const Dashboard = () => {
                 <TableCell>Mô tả</TableCell>
                 <TableCell>Đường dẫn ảnh</TableCell>
                 <TableCell>Ngày tạo</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -151,8 +182,15 @@ const Dashboard = () => {
                   <TableCell>{post.lastName}</TableCell>
                   <TableCell>{post.location}</TableCell>
                   <TableCell>{post.description}</TableCell>
-                  <TableCell>{post.userPicturePath}</TableCell>
+                  <TableCell>
+                    <img src={post.userPicturePath} alt="Post" style={{ width: '100px', height: '100px' }} />
+                  </TableCell>
                   <TableCell>{new Date(post.createdAt).toLocaleString("vi-VN")}</TableCell>
+                  <TableCell>
+                    <Button variant="contained" color="secondary" onClick={() => handleDeletePost(post._id)}>
+                      Delete
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

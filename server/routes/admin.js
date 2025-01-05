@@ -13,4 +13,6 @@ router.get('/post/:id', getPost);
 router.put("/post/:id", updatePost)
 router.delete("/post/:id", deletePost)
 
+
+
 export default router;
