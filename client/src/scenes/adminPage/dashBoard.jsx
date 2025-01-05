@@ -75,10 +75,7 @@ const Dashboard = () => {
   
   return (
     <Box
-      className={`dashboard ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}
-      sx={{ borderRadius: '10px' }}
     >
-      <Navbar toggleSidebar={toggleSidebar} />
       <Box sx={{ padding: 2 }}>
         <FlexBetween sx={{ justifyContent: 'center' }}>
           <TextField
@@ -105,7 +102,7 @@ const Dashboard = () => {
                 <TableCell>Địa điểm</TableCell>
                 <TableCell>Nghề nghiệp</TableCell>
                 <TableCell>Hồ sơ đã xem</TableCell>
-                <TableCell>Số lượt hiển thị</TableCell>
+                <TableCell>Số lượt tương tác</TableCell>
                 <TableCell>Ngày tạo</TableCell>
               </TableRow>
             </TableHead>
