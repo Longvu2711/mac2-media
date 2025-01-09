@@ -26,11 +26,12 @@ const UserSchema = new mongoose.Schema(
       min: 5,
     },
     picturePath: {
-      type: String,
+      type: String, 
       default: "",
-    },
+    },  
     friends: {
-      type: Array,
+      type: [mongoose.Schema.Types.ObjectId],      
+      ref: "User",       
       default: [],
     },
     location: String,

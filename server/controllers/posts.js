@@ -34,6 +34,23 @@ export const getFeedPosts = async (req, res) => {
   }
 };
 
+export const getFriendsPosts = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+      const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+
+    const friendsPosts = await Post.find({ userId: { $in: user.friends } });
+
+    res.status(200).json(friendsPosts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
