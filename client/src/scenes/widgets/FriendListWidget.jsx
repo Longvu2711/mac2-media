@@ -37,7 +37,7 @@ const FriendListWidget = ({ userId }) => {
       >
         Danh sách bạn bè - follower
       </Typography>
-      <Box display="flex" flexDirection="column" gap="1.5rem">
+      <Box display="flex" flexDirection="column" gap="1rem">
         {friends.map((friend) => (
           <Friend
             key={friend._id}

@@ -26,7 +26,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 
 const MyPostWidget = ({ picturePath }) => {
-  
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
@@ -69,8 +68,8 @@ const MyPostWidget = ({ picturePath }) => {
           sx={{
             width: "100%",
             backgroundColor: palette.neutral.light,
-            borderRadius: "2rem",
-            padding: "1rem 2rem",
+            borderRadius: "1rem",
+            padding: "1rem 1rem",
           }}
         />
       </FlexBetween>
@@ -95,7 +94,10 @@ const MyPostWidget = ({ picturePath }) => {
                   width="100%"
                   sx={{ "&:hover": { cursor: "pointer" } }}
                 >
-                  <input {...getInputProps()} />
+                  <input
+                    {...getInputProps()}
+                    accept=".jpg,.jpeg,.png,.gif,.mp4,.mp3,.mov,.webp" 
+                  />
                   {!image ? (
                     <p>Chọn ảnh hoặc kéo thả vào đây</p>
                   ) : (
@@ -118,7 +120,7 @@ const MyPostWidget = ({ picturePath }) => {
           </Dropzone>
         </Box>
       )}
-      <Divider sx={{ margin: "1.25rem 0" }} />
+      <Divider sx={{ margin: "2rem 0" }} />
       <FlexBetween>
         <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
           <ImageOutlined sx={{ color: mediumMain }} />
@@ -134,7 +136,7 @@ const MyPostWidget = ({ picturePath }) => {
           <>
             <FlexBetween gap="0.25rem">
               <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Clip</Typography>
+              <Typography color={mediumMain}>Ảnh động</Typography>
             </FlexBetween>
 
             {/* <FlexBetween gap="0.25rem">
@@ -142,10 +144,10 @@ const MyPostWidget = ({ picturePath }) => {
               <Typography color={mediumMain}>Đính kèm tệp</Typography>
             </FlexBetween> */}
 
-            <FlexBetween gap="0.25rem">
+            {/* <FlexBetween gap="0.25rem">
               <MicOutlined sx={{ color: mediumMain }} />
               <Typography color={mediumMain}>Âm thanh</Typography>
-            </FlexBetween>
+            </FlexBetween> */}
           </>
         ) : (
           <FlexBetween gap="0.25rem">

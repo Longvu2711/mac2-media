@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 import { Box, Typography, IconButton, useTheme } from "@mui/material";
-import { PeopleAlt, Public } from "@mui/icons-material"; // Icons
+import { PeopleAlt, Public } from "@mui/icons-material";
 import WidgetWrapper from "components/WidgetWrapper";
 import FlexBetween from "components/FlexBetween";
 
@@ -14,7 +14,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const token = useSelector((state) => state.token);
   const medium = palette.neutral.medium;
 
-  const [showFriendsPosts, setShowFriendsPosts] = useState(false); // Trạng thái toggle
+  const [showFriendsPosts, setShowFriendsPosts] = useState(false);
 
   const getPosts = async () => {
     const response = await fetch("http://localhost:8080/posts", {
@@ -57,7 +57,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     } else {
       getPosts();
     }
-  }, [showFriendsPosts]); // Re-run khi toggle thay đổi
+  }, [showFriendsPosts]);
 
   const sortedPosts = [...posts].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -65,37 +65,45 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   return (
     <>
-      {/* Nút chọn bài đăng */}
       {!isProfile && (
-        <FlexBetween mb="1rem">
-          <Typography variant="h5" fontWeight="500">
-            {showFriendsPosts ? "Bài đăng của bạn bè" : "Tất cả bài đăng"}
-          </Typography>
-          <FlexBetween>
-            <IconButton
-              onClick={() => setShowFriendsPosts(false)}
-              sx={{ color: !showFriendsPosts ? palette.primary.main : medium }}
-            >
-              <Public fontSize="large" /> {/* Icon cho tất cả bài đăng */}
-            </IconButton>
-            <IconButton
-              onClick={() => setShowFriendsPosts(true)}
-              sx={{ color: showFriendsPosts ? palette.primary.main : medium }}
-            >
-              <PeopleAlt fontSize="large" /> {/* Icon cho bài đăng của bạn bè */}
-            </IconButton>
-          </FlexBetween>
-        </FlexBetween>
+        <WidgetWrapper m="1rem 0" sx = {{position: "sticky", top: "10px" , zIndex: 10}}>
+          <Box mb="0.5rem">
+            {" "}
+            <FlexBetween>
+              <Typography color={medium} variant="h4" fontWeight="500">
+                {showFriendsPosts ? "Bài đăng của bạn bè" : "Tất cả bài đăng"}
+              </Typography>
+              <FlexBetween>
+                <IconButton
+                  onClick={() => setShowFriendsPosts(false)}
+                  sx={{
+                    color: !showFriendsPosts ? palette.primary.main : medium,
+                  }}
+                >
+                  <Public fontSize="medium" />
+                </IconButton>
+                <IconButton
+                  onClick={() => setShowFriendsPosts(true)}
+                  sx={{
+                    color: showFriendsPosts ? palette.primary.main : medium,
+                  }}
+                >
+                  <PeopleAlt fontSize="medium" />
+                </IconButton>
+              </FlexBetween>
+            </FlexBetween>
+          </Box>
+        </WidgetWrapper>
       )}
 
       {sortedPosts.length === 0 ? (
-        <Box sx={{ padding: "0px" }}>
-          <WidgetWrapper m="2rem 0">
-            <Typography color={medium} fontSize="2rem">
-              Chưa có bài đăng nào. Hãy thử lại sau nhé...
+        <WidgetWrapper m="1rem 0">
+          <Box mb="0.5rem">
+            <Typography color={medium} variant="h4" fontWeight="500">
+              Chưa có bài đăng nào.
             </Typography>
-          </WidgetWrapper>
-        </Box>
+          </Box>
+        </WidgetWrapper>
       ) : (
         sortedPosts.map(
           ({

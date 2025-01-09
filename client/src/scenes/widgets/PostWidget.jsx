@@ -73,7 +73,7 @@ const PostWidget = ({
     const postLink = `http://localhost:3000/posts/${postId}`;
     try {
       await navigator.clipboard.writeText(postLink);
-      setSnackbarOpen(true); 
+      setSnackbarOpen(true);
     } catch (err) {
       console.error("Lỗi khi sao chép:", err);
     }
@@ -91,11 +91,12 @@ const PostWidget = ({
     handleClose();
   };
 
-  const isImage = picturePath && /\.(jpg|jpeg|png|gif|webp|mp4|mp3|mov)$/i.test(picturePath);
+  const isImage =
+    picturePath && /\.(jpg|jpeg|png|gif|webp|mp4|mp3|mov)$/i.test(picturePath);
 
   return (
     <>
-      <WidgetWrapper m="2rem 0">
+      <WidgetWrapper m="1rem 0">
         <Friend
           friendId={postUserId}
           name={name}
@@ -121,9 +122,9 @@ const PostWidget = ({
               style={{
                 borderRadius: "0.75rem",
                 marginTop: "0.75rem",
-                maxWidth: "100%",
-                maxHeight: "400px",
-                objectFit: "contain",
+                width: "100%", 
+                maxWidth: "100%", 
+                objectFit: "contain", 
               }}
             />
           ) : filePath ? (
