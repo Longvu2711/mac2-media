@@ -91,7 +91,7 @@ const PostWidget = ({
     handleClose();
   };
 
-  const isImage = picturePath && /\.(jpg|jpeg|png|gif)$/i.test(picturePath);
+  const isImage = picturePath && /\.(jpg|jpeg|png|gif|webp|mp4|mp3|mov)$/i.test(picturePath);
 
   return (
     <>
