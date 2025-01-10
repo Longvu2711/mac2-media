@@ -122,9 +122,9 @@ const PostWidget = ({
               style={{
                 borderRadius: "0.75rem",
                 marginTop: "0.75rem",
-                width: "100%", 
-                maxWidth: "100%", 
-                objectFit: "contain", 
+                width: "100%",
+                maxWidth: "100%",
+                objectFit: "contain",
               }}
             />
           ) : filePath ? (
@@ -166,7 +166,6 @@ const PostWidget = ({
             <ShareOutlined />
           </IconButton>
 
-          {/* Menu Chia Sẻ */}
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -201,23 +200,34 @@ const PostWidget = ({
           message="📋 Đã sao chép liên kết!"
         />
       </WidgetWrapper>
-
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        transitionDuration={100} 
+        BackdropProps={{
+          sx: {
+            backdropFilter: "blur(8px)", 
+            backgroundColor: "rgba(0, 0, 0, 0.5)", 
+            transition:
+              "backdrop-filter 0.1s ease-in-out, background-color 0.1s ease-in-out", 
+          },
+        }}
+      >
         <Box
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "80%",
-            maxWidth: "600px",
+            width: "100%",
+            maxWidth: "1000px",
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 3,
             borderRadius: "10px",
             outline: "none",
             overflowY: "auto",
-            maxHeight: "80vh",
+            maxHeight: "800px",
             padding: "3rem",
           }}
         >

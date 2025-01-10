@@ -9,18 +9,18 @@ const LoginPage = () => {
       <Box
         width="100%"
         backgroundColor={theme.palette.background.alt}
-        p="1rem 6%"
+        p="2rem 6%"
         textAlign="center"
       >
         <Typography fontWeight="bold" fontSize="43px" color="primary">
-          Lotus - Mạng Việt
+          Lotus - Mạng Việt 
         </Typography>
       </Box>
 
       <Box
         width={isNonMobileScreens ? "50%" : "93%"}
-        p="1rem"
-        m="1rem auto"
+        p="2rem"
+        m="2rem auto"
         borderRadius="1.5rem"
         backgroundColor={theme.palette.background.alt}
       >

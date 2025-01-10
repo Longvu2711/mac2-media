@@ -66,6 +66,7 @@ const MyPostWidget = ({ picturePath }) => {
           onChange={(e) => setPost(e.target.value)}
           value={post}
           sx={{
+            fontSize: "1.25rem",
             width: "100%",
             backgroundColor: palette.neutral.light,
             borderRadius: "1rem",
@@ -123,7 +124,7 @@ const MyPostWidget = ({ picturePath }) => {
       <Divider sx={{ margin: "2rem 0" }} />
       <FlexBetween>
         <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-          <ImageOutlined sx={{ color: mediumMain }} />
+          <ImageOutlined sx={{ color: mediumMain, fontSize: "2rem" }} />
           <Typography
             color={mediumMain}
             sx={{ "&:hover": { cursor: "pointer", color: medium } }}
@@ -134,10 +135,15 @@ const MyPostWidget = ({ picturePath }) => {
 
         {isNonMobileScreens ? (
           <>
-            <FlexBetween gap="0.25rem">
-              <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Ảnh động</Typography>
-            </FlexBetween>
+           <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
+           <GifBoxOutlined sx={{ color: mediumMain, fontSize: "2rem" }} />
+           <Typography
+            color={mediumMain}
+            sx={{ "&:hover": { cursor: "pointer", color: medium } }}
+          >
+            Ảnh động
+          </Typography>
+        </FlexBetween>
 
             {/* <FlexBetween gap="0.25rem">
               <AttachFileOutlined sx={{ color: mediumMain }} />

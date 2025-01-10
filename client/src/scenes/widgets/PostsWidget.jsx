@@ -66,7 +66,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   return (
     <>
       {!isProfile && (
-        <WidgetWrapper m="1rem 0" sx = {{position: "sticky", top: "10px" , zIndex: 10}}>
+        <WidgetWrapper m="1rem 0" sx = {{position: "sticky", top: "0px" , zIndex: 10}}>
           <Box mb="0.5rem">
             {" "}
             <FlexBetween>
@@ -80,7 +80,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                     color: !showFriendsPosts ? palette.primary.main : medium,
                   }}
                 >
-                  <Public fontSize="medium" />
+                  <Public fontSize="large" />
                 </IconButton>
                 <IconButton
                   onClick={() => setShowFriendsPosts(true)}
@@ -88,7 +88,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                     color: showFriendsPosts ? palette.primary.main : medium,
                   }}
                 >
-                  <PeopleAlt fontSize="medium" />
+                  <PeopleAlt fontSize="large" />
                 </IconButton>
               </FlexBetween>
             </FlexBetween>
