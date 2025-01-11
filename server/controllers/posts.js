@@ -25,25 +25,34 @@ export const createPost = async (req, res) => {
   }
 };
 
+//all posts
 export const getFeedPosts = async (req, res) => {
   try {
-    const post = await Post.find();
-    res.status(200).json(post);
+    const userId = req.user.id;
+    const posts = await Post.find({
+      $or: [{ isHidden: false }, { userId: userId }], 
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
 };
 
+//friends Feed
 export const getFriendsPosts = async (req, res) => {
   try {
     const { userId } = req.params;
+    const user = await User.findById(userId);
 
-      const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "Người dùng không tồn tại" });
     }
 
-    const friendsPosts = await Post.find({ userId: { $in: user.friends } });
+    const friendsPosts = await Post.find({
+      userId: { $in: user.friends },
+      isHidden: false, 
+    }).sort({ createdAt: -1 });
 
     res.status(200).json(friendsPosts);
   } catch (err) {
@@ -51,16 +60,22 @@ export const getFriendsPosts = async (req, res) => {
   }
 };
 
+//user's posts
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const post = await Post.find({ userId });
-    res.status(200).json(post);
+    const currentUserId = req.user.id; 
+
+    const posts = await Post.find({
+      userId,
+      $or: [{ isHidden: false }, { userId: currentUserId }], 
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
   } catch (err) {
     res.status(404).json({ message: err.message });
   }
 };
-
 export const likePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,5 +98,31 @@ export const likePost = async (req, res) => {
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
+  }
+};
+
+export const togglePostVisibility = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user.id;
+
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: "Bài viết không tồn tại" });
+
+    if (post.userId !== userId) {
+      return res.status(403).json({ message: "Bạn không có quyền chỉnh sửa bài viết này" });
+    }
+
+    post.isHidden = !post.isHidden;
+    await post.save();
+
+    const userPosts = await Post.find({ userId }).sort({ createdAt: -1 });
+
+    res.status(200).json({ 
+      message: `Bài viết đã được ${post.isHidden ? "ẩn" : "hiện"}`, 
+      posts: userPosts 
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi server", error });
   }
 };
