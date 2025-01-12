@@ -15,6 +15,11 @@ export const register = async (req, res) => {
       occupation,
     } = req.body;
 
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "Email đã được đăng ký." });
+    }
+
     const salt = await bcrypt.genSalt(10); 
     const passwordHash = await bcrypt.hash(password, salt);
 
@@ -42,12 +47,11 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
-    if (!user) return res.status(400).json({ msg: "User does not exist." });
+    if (!user) return res.status(400).json({ msg: "Người dùng không tồn tại." });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials." });
+    if (!isMatch) return res.status(400).json({ msg: "Mật khẩu không chính xác." });
 
-    // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,{ expiresIn: '1h' });
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
     const userWithoutPassword = user.toObject(); 

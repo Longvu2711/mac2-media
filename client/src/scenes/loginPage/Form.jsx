@@ -15,11 +15,16 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("Không được để trống"),
   lastName: yup.string().required("Không được để trống"),
-  email: yup.string().email("Email không tồn tại!!").required("Không được để trống"),
+  email: yup
+    .string()
+    .email("Email không tồn tại!!")
+    .required("Không được để trống"),
   password: yup.string().required("Không được để trống"),
   location: yup.string().required("Không được để trống"),
   occupation: yup.string().required("Không được để trống"),
@@ -27,7 +32,10 @@ const registerSchema = yup.object().shape({
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email("Email không tồn tại").required("Không được để trống email"),
+  email: yup
+    .string()
+    .email("Email không tồn tại")
+    .required("Không được để trống email"),
   password: yup.string().required("Không được để trống"),
 });
 
@@ -78,24 +86,35 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:8080/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const loggedIn = await loggedInResponse.json();
-    onSubmitProps.resetForm();
-    if (loggedIn) {
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
-      );
-      navigate("/home");
+    try {
+      const loggedInResponse = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+  
+      if (loggedInResponse.status === 200) {
+        const loggedIn = await loggedInResponse.json();
+        onSubmitProps.resetForm();
+
+        dispatch(
+          setLogin({
+            user: loggedIn.user,
+            token: loggedIn.token,
+          })
+        );
+  
+        navigate("/home");
+      } else if (loggedInResponse.status === 400) {
+        alert("Email hoặc mật khẩu không chính xác."); 
+      } else {
+        const errorData = await loggedInResponse.json();
+        alert(`Đăng nhập thất bại: ${errorData.message}`); 
+      }
+    } catch (error) {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại.");  
     }
   };
-
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
@@ -194,9 +213,7 @@ const Form = () => {
                       >
                         <input {...getInputProps()} />
                         {!values.picture ? (
-                          <p>
-                            Chọn ảnh hoặc kéo thả vào đây
-                          </p>
+                          <p>Chọn ảnh hoặc kéo thả vào đây</p>
                         ) : (
                           <FlexBetween>
                             <Typography>{values.picture.name}</Typography>
@@ -233,13 +250,12 @@ const Form = () => {
             />
           </Box>
 
-          {/* BUTTONS */}
           <Box>
             <Button
               fullWidth
               type="submit"
               sx={{
-                m: "1rem 0",
+                m: "2rem 0",
                 p: "1rem",
                 backgroundColor: palette.primary.main,
                 color: palette.background.alt,
@@ -262,11 +278,13 @@ const Form = () => {
                 },
               }}
             >
-              {isLogin ? "Bạn chưa có tài khoản? Đăng ký tại đây." : "Trở lại trang đăng nhập."}
+              {isLogin
+                ? "Bạn chưa có tài khoản? Đăng ký tại đây."
+                : "Trở lại trang đăng nhập."}
             </Typography>
             {isLogin && (
               <Typography
-                onClick={() => navigate('/admin')}
+                onClick={() => navigate("/admin")}
                 sx={{
                   textDecoration: "underline",
                   color: palette.primary.main,

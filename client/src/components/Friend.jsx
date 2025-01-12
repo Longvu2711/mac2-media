@@ -9,10 +9,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
 import { useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath, postId, isHidden: initialHidden }) => {
+const Friend = ({ 
+  friendId, 
+  name, 
+  subtitle, 
+  userPicturePath, 
+  postId, 
+  isHidden: initialHidden, 
+  createdAt 
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
@@ -27,6 +37,17 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId, isHidden: i
   const medium = palette.neutral.medium;
 
   const isFriend = friends.find((friend) => friend._id === friendId);
+
+  // 🔹 Chuyển đổi `createdAt` thành định dạng "x thời gian trước"
+  let formattedDate = "";
+  if (createdAt) {
+    const parsedDate = new Date(createdAt);
+    if (!isNaN(parsedDate)) {
+      formattedDate = formatDistanceToNow(parsedDate, { addSuffix: true, locale: vi });
+    } else {
+      formattedDate = "Không xác định";
+    }
+  }
 
   const patchFriend = async () => {
     if (_id === friendId) return;
@@ -79,6 +100,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId, isHidden: i
             "&:hover": { cursor: "pointer" },
           }}
         >
+          {/* 🔹 Hiển thị trạng thái bài viết (Công khai / Cá nhân) */}
           <Typography
             color={main}
             variant="h5"
@@ -87,13 +109,16 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, postId, isHidden: i
               "&:hover": { color: palette.primary.light },
             }}
           >
-            {name}
+            {name} {isHidden ? "• Bài viết cá nhân" : "• Bài viết công khai"}
           </Typography>
-          <Typography color={medium} fontSize="0.75rem">
-            {subtitle}
+
+          {/* 🔹 Hiển thị địa điểm và thời gian đăng bài */}
+          <Typography color={medium} fontSize="1rem">
+            {subtitle} • {formattedDate}
           </Typography>
         </Box>
       </FlexBetween>
+
       {_id !== friendId ? (
         <IconButton
           onClick={patchFriend}

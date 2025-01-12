@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import "./dashBoard.css";
 import {
   Box,
   Typography,

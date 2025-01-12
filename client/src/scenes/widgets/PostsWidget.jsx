@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 import { Box, Typography, IconButton, useTheme } from "@mui/material";
-import { PeopleAlt, Public } from "@mui/icons-material";
+import { PeopleAlt, Public } from "@mui/icons-material"; 
 import WidgetWrapper from "components/WidgetWrapper";
 import FlexBetween from "components/FlexBetween";
 
@@ -14,7 +14,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const token = useSelector((state) => state.token);
   const medium = palette.neutral.medium;
 
-  const [showFriendsPosts, setShowFriendsPosts] = useState(false);
+  const [showFriendsPosts, setShowFriendsPosts] = useState(false); 
 
   const getPosts = async () => {
     const response = await fetch("http://localhost:8080/posts", {
@@ -66,11 +66,11 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   return (
     <>
       {!isProfile && (
-        <WidgetWrapper m="1rem 0" sx = {{position: "sticky", top: "0px" , zIndex: 10}}>
+        <WidgetWrapper m="1rem 0">
           <Box mb="0.5rem">
             {" "}
             <FlexBetween>
-              <Typography color={medium} variant="h4" fontWeight="500">
+              <Typography variant="h5" fontWeight="500">
                 {showFriendsPosts ? "Bài đăng của bạn bè" : "Tất cả bài đăng"}
               </Typography>
               <FlexBetween>
@@ -80,7 +80,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                     color: !showFriendsPosts ? palette.primary.main : medium,
                   }}
                 >
-                  <Public fontSize="large" />
+                  <Public fontSize="medium" />
                 </IconButton>
                 <IconButton
                   onClick={() => setShowFriendsPosts(true)}
@@ -88,7 +88,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                     color: showFriendsPosts ? palette.primary.main : medium,
                   }}
                 >
-                  <PeopleAlt fontSize="large" />
+                  <PeopleAlt fontSize="medium" />
                 </IconButton>
               </FlexBetween>
             </FlexBetween>
@@ -97,13 +97,13 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       )}
 
       {sortedPosts.length === 0 ? (
-        <WidgetWrapper m="1rem 0">
-          <Box mb="0.5rem">
-            <Typography color={medium} variant="h4" fontWeight="500">
+        <Box sx={{ padding: "0px" }}>
+          <WidgetWrapper m="1rem 0">
+            <Typography color={medium} fontSize="1rem">
               Chưa có bài đăng nào.
             </Typography>
-          </Box>
-        </WidgetWrapper>
+          </WidgetWrapper>
+        </Box>
       ) : (
         sortedPosts.map(
           ({

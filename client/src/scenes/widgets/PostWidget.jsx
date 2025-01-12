@@ -24,6 +24,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
+import { formatDistanceToNow } from "date-fns"; 
 
 const PostWidget = ({
   postId,
@@ -36,6 +37,9 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  isHidden,
+  createdAt, 
+  updatedAt,
 }) => {
   const [isComments, setIsComments] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -101,6 +105,7 @@ const PostWidget = ({
           friendId={postUserId}
           name={name}
           subtitle={location}
+          postId={postId}
           userPicturePath={userPicturePath}
         />
 
@@ -242,6 +247,7 @@ const PostWidget = ({
             friendId={postUserId}
             name={name}
             subtitle={location}
+            postId={postId}
             userPicturePath={userPicturePath}
           />
 

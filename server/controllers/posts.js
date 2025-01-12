@@ -15,6 +15,7 @@ export const createPost = async (req, res) => {
       picturePath,
       likes: {},
       comments: [],
+      isHidden: false,
     });
     await newPost.save();
 
@@ -106,9 +107,13 @@ export const togglePostVisibility = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.id;
 
+    // Find the post by ID
     const post = await Post.findById(postId);
-    if (!post) return res.status(404).json({ message: "Bài viết không tồn tại" });
+    if (!post) {
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
+    }
 
+    // Check if the post belongs to the current user
     if (post.userId !== userId) {
       return res.status(403).json({ message: "Bạn không có quyền chỉnh sửa bài viết này" });
     }
@@ -116,13 +121,13 @@ export const togglePostVisibility = async (req, res) => {
     post.isHidden = !post.isHidden;
     await post.save();
 
-    const userPosts = await Post.find({ userId }).sort({ createdAt: -1 });
-
-    res.status(200).json({ 
-      message: `Bài viết đã được ${post.isHidden ? "ẩn" : "hiện"}`, 
-      posts: userPosts 
+    res.status(200).json({
+      message: `Bài viết đã được ${post.isHidden ? "ẩn" : "hiện"}`,
+      isHidden: post.isHidden,  // Returning the updated visibility status
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error });
+    console.error("Error toggling post visibility:", error);
+    res.status(500).json({ message: "Lỗi server, vui lòng thử lại sau.", error: error.message });
   }
 };
+
