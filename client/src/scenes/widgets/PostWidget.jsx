@@ -6,6 +6,7 @@ import {
   Close,
   Download,
 } from "@mui/icons-material";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import {
   Box,
   Divider,
@@ -27,7 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-
+import { useNavigate } from "react-router-dom";
 const PostWidget = ({
   postId,
   postUserId,
@@ -48,35 +49,22 @@ const PostWidget = ({
   const [newComment, setNewComment] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
+  const { palette } = useTheme();
+  const main = palette.neutral.main;
+  const liked = "#FF0000";
+  const medium = palette.neutral.medium;
+
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
   const loggedInUserName = useSelector((state) => state.user.name);
-  const loggedInUserPicturePath = useSelector((state) => state.user.picturePath); 
+  const loggedInUserPicturePath = useSelector(
+    (state) => state.user.picturePath
+  );
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
 
-  // const TimeAgo = ({ createdAt }) => {
-  //   const [formattedDate, setFormattedDate] = useState("");
-  
-  //   useEffect(() => {
-  //     const updateTime = () => {
-  //       setFormattedDate(
-  //         formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: vi })
-  //       );
-  //     };
-  //     updateTime();
-  //     const intervalId = setInterval(updateTime, 60000);
-  //     return () => clearInterval(intervalId);
-  //   }, [createdAt]);
-  
-  //   return <Typography sx={{ color: main, fontSize: "0.875rem" }}>{formattedDate}</Typography>;
-  // };
-  
-
-  const { palette } = useTheme();
-  const main = palette.neutral.main;
-  const liked = "#FF0000";
+  const navigate = useNavigate();
 
   const patchLike = async () => {
     const response = await fetch(`http://localhost:8080/posts/${postId}/like`, {
@@ -103,6 +91,10 @@ const PostWidget = ({
     }
   };
 
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
   const handleToggleComments = () => {
     if (!isComments) {
       fetchComments();
@@ -125,14 +117,14 @@ const PostWidget = ({
           userId: loggedInUserId,
           text: newComment,
           userName: loggedInUserName,
-          userPicturePath: loggedInUserPicturePath, 
+          userPicturePath: loggedInUserPicturePath,
         }),
       });
 
       const data = await response.json();
       setCommentsList([data, ...commentsList]);
       setNewComment("");
-      comments.push(data); // Update comment count
+      comments.push(data);
     } catch (err) {
       console.error("Lỗi khi thêm bình luận:", err);
     }
@@ -140,14 +132,19 @@ const PostWidget = ({
 
   const handleDeleteComment = async (commentId) => {
     try {
-      const response = await fetch(`http://localhost:8080/comments/${commentId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/comments/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.ok) {
-        setCommentsList(commentsList.filter((comment) => comment._id !== commentId));
+        setCommentsList(
+          commentsList.filter((comment) => comment._id !== commentId)
+        );
       } else {
         console.error("Failed to delete comment");
       }
@@ -198,6 +195,8 @@ const PostWidget = ({
           userPicturePath={userPicturePath}
         />
 
+        <Divider sx={{ margin: "1rem 0" }} />
+
         <Box onClick={() => setOpenModal(true)} sx={{ cursor: "pointer" }}>
           <Typography
             color={main}
@@ -208,7 +207,6 @@ const PostWidget = ({
           >
             {description}
           </Typography>
-
           {isImage ? (
             <img
               src={`http://localhost:8080/assets/${picturePath}`}
@@ -234,6 +232,7 @@ const PostWidget = ({
             </Button>
           ) : null}
         </Box>
+        <Divider sx={{ margin: "1rem 0" }} />
 
         <FlexBetween mt="0.25rem">
           <FlexBetween gap="1rem">
@@ -286,28 +285,54 @@ const PostWidget = ({
           <Box mt="0.5rem">
             {commentsList.map((comment, i) => (
               <Box key={comment._id}>
-                <Divider />
-                <Box display="flex" alignItems="center" gap="0.5rem" pl="1rem" py="0.5rem">
+                <Divider sx={{ margin: "0.5rem 0" }} />
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap="0.5rem"
+                  pl="1rem"
+                  py="0.5rem"
+                >
                   <img
                     src={`http://localhost:8080/assets/${comment.userPicturePath}`}
                     alt="user"
-                    style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => navigate(`/profile/${comment.userId}`)}
                   />
                   <Box flexGrow={1}>
-                    <Typography sx={{ color: main, fontWeight: "bold" }}>
-                      {comment.userName}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => navigate(`/profile/${comment.userId}`)}
+                    >
+                      <Typography sx={{ color: main, fontWeight: "bold" }}>
+                        {comment.userName}
+                      </Typography>
+                      <Typography sx={{ color: medium, fontSize: "0.75rem" }}>
+                        {formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: main, mt: "0.25rem" }}>
+                      {comment.text}
                     </Typography>
-                    <Typography sx={{ color: main, fontSize: "0.75rem" }}>
-                      {formatDistanceToNow(new Date(comment.createdAt), {
-                        addSuffix: true,
-                        locale: vi,
-                      })}
-                    </Typography>
-                    <Typography sx={{ color: main, mt: "0.25rem" }}>{comment.text}</Typography>
                   </Box>
                   {comment.userId === loggedInUserId && (
-                    <IconButton onClick={() => handleDeleteComment(comment._id)}>
-                      <Close />
+                    <IconButton
+                      onClick={() => handleDeleteComment(comment._id)}
+                    >
+                      <DeleteOutlineOutlinedIcon />
                     </IconButton>
                   )}
                 </Box>
@@ -449,26 +474,52 @@ const PostWidget = ({
               {commentsList.map((comment, i) => (
                 <Box key={comment._id}>
                   <Divider />
-                  <Box display="flex" alignItems="center" gap="0.5rem" pl="1rem" py="0.5rem">
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap="0.5rem"
+                    pl="1rem"
+                    py="0.5rem"
+                  >
                     <img
                       src={`http://localhost:8080/assets/${comment.userPicturePath}`}
                       alt="user"
-                      style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => navigate(`/profile/${comment.userId}`)}
                     />
                     <Box flexGrow={1}>
-                      <Typography sx={{ color: main, fontWeight: "bold" }}>
-                        {comment.userName}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => navigate(`/profile/${comment.userId}`)}
+                      >
+                        <Typography sx={{ color: main, fontWeight: "bold" }}>
+                          {comment.userName}
+                        </Typography>
+                        <Typography sx={{ color: medium, fontSize: "0.75rem" }}>
+                          {formatDistanceToNow(new Date(comment.createdAt), {
+                            addSuffix: true,
+                            locale: vi,
+                          })}
+                        </Typography>
+                      </Box>
+                      <Typography sx={{ color: main, mt: "0.25rem" }}>
+                        {comment.text}
                       </Typography>
-                      <Typography sx={{ color: main, fontSize: "0.75rem" }}>
-                        {formatDistanceToNow(new Date(comment.createdAt), {
-                          addSuffix: true,
-                          locale: vi,
-                        })}
-                      </Typography>
-                      <Typography sx={{ color: main, mt: "0.25rem" }}>{comment.text}</Typography>
                     </Box>
                     {comment.userId === loggedInUserId && (
-                      <IconButton onClick={() => handleDeleteComment(comment._id)}>
+                      <IconButton
+                        onClick={() => handleDeleteComment(comment._id)}
+                      >
                         <Close />
                       </IconButton>
                     )}

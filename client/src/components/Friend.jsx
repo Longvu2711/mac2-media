@@ -19,7 +19,7 @@ const Friend = ({
   name,
   subtitle,
   userPicturePath,
-  postId, // Lưu ý: chỉ nhận postId nếu bài viết có trạng thái visibility
+  postId, 
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Friend = ({
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
   const { palette } = useTheme();
-  const [isHidden, setIsHidden] = useState(false); // Mặc định bài viết không ẩn
+  const [isHidden, setIsHidden] = useState(false); 
 
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
@@ -94,9 +94,9 @@ const Friend = ({
             fontWeight="500"
             sx={{
               display: "flex",
-              alignItems: "center", // Giữ icon và chữ trên cùng một hàng
-              "&:hover": { color: palette.primary.light }, // Hover toàn bộ dòng
-              cursor: "pointer", // Giúp hiển thị dấu trỏ chuột khi hover
+              alignItems: "center",
+              "&:hover": { color: palette.primary.light }, 
+              cursor: "pointer", 
             }}
           >
             {name}
@@ -107,8 +107,8 @@ const Friend = ({
                   display: "flex",
                   alignItems: "center",
                   marginLeft: "0.5rem",
-                  color: main, // Giữ màu đồng nhất với tên
-                  "&:hover": { color: palette.primary.light }, // Hover thay đổi màu cả trạng thái bài viết
+                  color: main,
+                  "&:hover": { color: palette.primary.light },
                 }}
               >
                 {isHidden ? (

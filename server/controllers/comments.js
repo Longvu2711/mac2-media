@@ -15,9 +15,9 @@ export const addComment = async (req, res) => {
         postId,
         text,
         userId,
+        userName: user.firstName + " " + user.lastName,
         userPicturePath: user.picturePath,
       });
-  
       await newComment.save();
       res.status(201).json(newComment);
     } catch (err) {
