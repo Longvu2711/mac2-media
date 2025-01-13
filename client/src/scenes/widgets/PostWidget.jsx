@@ -6,6 +6,7 @@ import {
   Close,
   Download,
 } from "@mui/icons-material";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import {
   Box,
   Divider,
@@ -17,14 +18,17 @@ import {
   Snackbar,
   Modal,
   Button,
+  TextField,
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
-
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 const PostWidget = ({
   postId,
   postUserId,
@@ -36,19 +40,31 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  isHidden,
+  createdAt,
+  updatedAt,
 }) => {
+  const [commentsList, setCommentsList] = useState([]);
   const [isComments, setIsComments] = useState(false);
+  const [newComment, setNewComment] = useState("");
   const [openModal, setOpenModal] = useState(false);
-
-  const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user._id);
-  const isLiked = Boolean(likes[loggedInUserId]);
-  const likeCount = Object.keys(likes).length;
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const liked = "#FF0000";
+  const medium = palette.neutral.medium;
+
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.token);
+  const loggedInUserId = useSelector((state) => state.user._id);
+  const loggedInUserName = useSelector((state) => state.user.name);
+  const loggedInUserPicturePath = useSelector(
+    (state) => state.user.picturePath
+  );
+  const isLiked = Boolean(likes[loggedInUserId]);
+  const likeCount = Object.keys(likes).length;
+
+  const navigate = useNavigate();
 
   const patchLike = async () => {
     const response = await fetch(`http://localhost:8080/posts/${postId}/like`, {
@@ -63,6 +79,80 @@ const PostWidget = ({
     dispatch(setPost({ post: updatedPost }));
   };
 
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/comments/${postId}?page=1&limit=5`
+      );
+      const data = await response.json();
+      setCommentsList(data);
+    } catch (err) {
+      console.error("Lỗi khi tải bình luận:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const handleToggleComments = () => {
+    if (!isComments) {
+      fetchComments();
+    }
+    setIsComments(!isComments);
+  };
+
+  const handleAddComment = async () => {
+    if (newComment.trim() === "") return;
+
+    try {
+      const response = await fetch(`http://localhost:8080/comments`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: postId,
+          userId: loggedInUserId,
+          text: newComment,
+          userName: loggedInUserName,
+          userPicturePath: loggedInUserPicturePath,
+        }),
+      });
+
+      const data = await response.json();
+      setCommentsList([data, ...commentsList]);
+      setNewComment("");
+      comments.push(data);
+    } catch (err) {
+      console.error("Lỗi khi thêm bình luận:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/comments/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        setCommentsList(
+          commentsList.filter((comment) => comment._id !== commentId)
+        );
+      } else {
+        console.error("Failed to delete comment");
+      }
+    } catch (err) {
+      console.error("Lỗi khi xóa bình luận:", err);
+    }
+  };
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
@@ -73,7 +163,7 @@ const PostWidget = ({
     const postLink = `http://localhost:3000/posts/${postId}`;
     try {
       await navigator.clipboard.writeText(postLink);
-      setSnackbarOpen(true); 
+      setSnackbarOpen(true);
     } catch (err) {
       console.error("Lỗi khi sao chép:", err);
     }
@@ -91,17 +181,21 @@ const PostWidget = ({
     handleClose();
   };
 
-  const isImage = picturePath && /\.(jpg|jpeg|png|gif)$/i.test(picturePath);
+  const isImage =
+    picturePath && /\.(jpg|jpeg|png|gif|webp|mp4|mp3|mov)$/i.test(picturePath);
 
   return (
     <>
-      <WidgetWrapper m="2rem 0">
+      <WidgetWrapper m="1rem 0">
         <Friend
           friendId={postUserId}
           name={name}
           subtitle={location}
+          postId={postId}
           userPicturePath={userPicturePath}
         />
+
+        <Divider sx={{ margin: "1rem 0" }} />
 
         <Box onClick={() => setOpenModal(true)} sx={{ cursor: "pointer" }}>
           <Typography
@@ -109,11 +203,11 @@ const PostWidget = ({
             sx={{
               mt: "1rem",
               fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+              whiteSpace: "pre-wrap", 
             }}
           >
             {description}
           </Typography>
-
           {isImage ? (
             <img
               src={`http://localhost:8080/assets/${picturePath}`}
@@ -121,8 +215,8 @@ const PostWidget = ({
               style={{
                 borderRadius: "0.75rem",
                 marginTop: "0.75rem",
+                width: "100%",
                 maxWidth: "100%",
-                maxHeight: "400px",
                 objectFit: "contain",
               }}
             />
@@ -139,6 +233,7 @@ const PostWidget = ({
             </Button>
           ) : null}
         </Box>
+        <Divider sx={{ margin: "1rem 0" }} />
 
         <FlexBetween mt="0.25rem">
           <FlexBetween gap="1rem">
@@ -154,18 +249,25 @@ const PostWidget = ({
             </FlexBetween>
 
             <FlexBetween gap="0.3rem">
-              <IconButton onClick={() => setIsComments(!isComments)}>
+              <IconButton onClick={handleToggleComments}>
                 <ChatBubbleOutlineOutlined />
               </IconButton>
-              <Typography>{comments.length}</Typography>
+              <Typography>{commentsList.length}</Typography>
             </FlexBetween>
           </FlexBetween>
 
-          <IconButton onClick={handleShareClick}>
-            <ShareOutlined />
-          </IconButton>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Typography sx={{ color: main, fontSize: "0.875rem" }}>
+              {formatDistanceToNow(new Date(createdAt), {
+                addSuffix: true,
+                locale: vi,
+              })}
+            </Typography>
+            <IconButton onClick={handleShareClick}>
+              <ShareOutlined />
+            </IconButton>
+          </Box>
 
-          {/* Menu Chia Sẻ */}
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -182,15 +284,76 @@ const PostWidget = ({
 
         {isComments && (
           <Box mt="0.5rem">
-            {comments.map((comment, i) => (
-              <Box key={`${name}-${i}`}>
-                <Divider />
-                <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                  {comment}
-                </Typography>
+            {commentsList.map((comment, i) => (
+              <Box key={comment._id}>
+                <Divider sx={{ margin: "0.5rem 0" }} />
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap="0.5rem"
+                  pl="1rem"
+                  py="0.5rem"
+                >
+                  <img
+                    src={`http://localhost:8080/assets/${comment.userPicturePath}`}
+                    alt="user"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => navigate(`/profile/${comment.userId}`)}
+                  />
+                  <Box flexGrow={1}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => navigate(`/profile/${comment.userId}`)}
+                    >
+                      <Typography sx={{ color: main, fontWeight: "bold" }}>
+                        {comment.userName}
+                      </Typography>
+                      <Typography sx={{ color: medium, fontSize: "0.75rem" }}>
+                        {formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: main, mt: "0.25rem" }}>
+                      {comment.text}
+                    </Typography>
+                  </Box>
+                  {comment.userId === loggedInUserId && (
+                    <IconButton
+                      onClick={() => handleDeleteComment(comment._id)}
+                    >
+                      <DeleteOutlineOutlinedIcon />
+                    </IconButton>
+                  )}
+                </Box>
               </Box>
             ))}
             <Divider />
+            <Box mt="1rem">
+              <TextField
+                fullWidth
+                label="Thêm bình luận"
+                variant="outlined"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddComment();
+                  }
+                }}
+              />
+            </Box>
           </Box>
         )}
         <Snackbar
@@ -200,23 +363,34 @@ const PostWidget = ({
           message="📋 Đã sao chép liên kết!"
         />
       </WidgetWrapper>
-
-      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+      <Modal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        transitionDuration={100}
+        BackdropProps={{
+          sx: {
+            backdropFilter: "blur(8px)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            transition:
+              "backdrop-filter 0.1s ease-in-out, background-color 0.1s ease-in-out",
+          },
+        }}
+      >
         <Box
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "80%",
-            maxWidth: "600px",
+            width: "100%",
+            maxWidth: "1000px",
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 3,
             borderRadius: "10px",
             outline: "none",
             overflowY: "auto",
-            maxHeight: "80vh",
+            maxHeight: "800px",
             padding: "3rem",
           }}
         >
@@ -231,14 +405,16 @@ const PostWidget = ({
             friendId={postUserId}
             name={name}
             subtitle={location}
+            postId={postId}
             userPicturePath={userPicturePath}
           />
 
           <Typography
             color={main}
             sx={{
-              mt: "1rem",
+              mt: "2rem",
               fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" },
+              whiteSpace: "pre-wrap", 
             }}
           >
             {description}
@@ -283,29 +459,98 @@ const PostWidget = ({
               </FlexBetween>
 
               <FlexBetween gap="0.3rem">
-                <IconButton onClick={() => setIsComments(!isComments)}>
+                <IconButton onClick={handleToggleComments}>
                   <ChatBubbleOutlineOutlined />
                 </IconButton>
-                <Typography>{comments.length}</Typography>
+                <Typography>{commentsList.length}</Typography>
               </FlexBetween>
             </FlexBetween>
 
-            <IconButton>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Typography sx={{ color: main, fontSize: "1rem" }}>
+              {formatDistanceToNow(new Date(createdAt), {
+                addSuffix: true,
+                locale: vi,
+              })}
+            </Typography>
+            <IconButton onClick={handleShareClick}>
               <ShareOutlined />
             </IconButton>
+          </Box>
           </FlexBetween>
 
           {isComments && (
             <Box mt="1rem">
-              {comments.map((comment, i) => (
-                <Box key={`${name}-${i}`}>
+              {commentsList.map((comment, i) => (
+                <Box key={comment._id}>
                   <Divider />
-                  <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                    {comment}
-                  </Typography>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap="0.5rem"
+                    pl="1rem"
+                    py="0.5rem"
+                  >
+                    <img
+                      src={`http://localhost:8080/assets/${comment.userPicturePath}`}
+                      alt="user"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => navigate(`/profile/${comment.userId}`)}
+                    />
+                    <Box flexGrow={1}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => navigate(`/profile/${comment.userId}`)}
+                      >
+                        <Typography sx={{ color: main, fontWeight: "bold" }}>
+                          {comment.userName}
+                        </Typography>
+                        <Typography sx={{ color: medium, fontSize: "0.75rem" }}>
+                        {formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
+                      </Typography>
+                      </Box>
+                      <Typography sx={{ color: main, mt: "0.25rem" }}>
+                        {comment.text}
+                      </Typography>
+                    </Box>
+                    {comment.userId === loggedInUserId && (
+                      <IconButton
+                        onClick={() => handleDeleteComment(comment._id)}
+                      >
+                        <Close />
+                      </IconButton>
+                    )}
+                  </Box>
                 </Box>
               ))}
               <Divider />
+              <Box mt="1rem">
+                <TextField
+                  fullWidth
+                  label="Thêm bình luận"
+                  variant="outlined"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddComment();
+                    }
+                  }}
+                />
+              </Box>
             </Box>
           )}
         </Box>

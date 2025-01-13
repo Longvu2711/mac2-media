@@ -1,5 +1,9 @@
 import User from "../models/User.js";
 import Post from "../models/Post.js";
+import fs from 'fs';
+import path from 'path';
+import mime from 'mime-types';
+
 
 export const updateUser = async (req, res) => {
   try {
@@ -68,7 +72,6 @@ export const getAllPosts = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const updatePost = async (req, res) => {
   try {

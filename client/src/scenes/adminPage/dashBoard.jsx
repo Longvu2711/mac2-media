@@ -2,8 +2,24 @@ import React, { useState, useEffect, useRef } from "react";
 import { Route, Switch } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import "./dashBoard.css";
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 
 const Dashboard = () => {
@@ -11,6 +27,9 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [searchEmail, setSearchEmail] = useState("");
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteType, setDeleteType] = useState("");
   const inputRef = useRef(null);
   const searchTimeoutRef = useRef(null);
 
@@ -56,16 +75,16 @@ const Dashboard = () => {
     }, 500);
   }, [searchEmail]);
 
-
   const handleSearch = () => {
     if (searchEmail.trim() === "") {
       fetchUsers();
     } else {
-      const filteredUsers = users.filter(user => user.email.includes(searchEmail));
+      const filteredUsers = users.filter((user) =>
+        user.email.includes(searchEmail)
+      );
       setUsers(filteredUsers);
     }
   };
-
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -76,9 +95,9 @@ const Dashboard = () => {
   const handleDeleteUser = async (userId) => {
     try {
       await fetch(`http://localhost:8080/admin/user/${userId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      setUsers(users.filter(user => user._id !== userId));
+      setUsers(users.filter((user) => user._id !== userId));
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -87,26 +106,71 @@ const Dashboard = () => {
   const handleDeletePost = async (postId) => {
     try {
       await fetch(`http://localhost:8080/admin/post/${postId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      setPosts(posts.filter(post => post._id !== postId));
+      setPosts(posts.filter((post) => post._id !== postId));
     } catch (error) {
       console.error("Error deleting post:", error);
     }
   };
-  
+
+  const handleOpenConfirmDialog = (type, target) => {
+    setDeleteType(type);
+    setDeleteTarget(target);
+    setOpenConfirmDialog(true);
+  };
+
+  const handleCloseConfirmDialog = () => {
+    setOpenConfirmDialog(false);
+    setDeleteTarget(null);
+    setDeleteType("");
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteType === "user") {
+      handleDeleteUser(deleteTarget);
+    } else if (deleteType === "post") {
+      handleDeletePost(deleteTarget);
+    }
+    handleCloseConfirmDialog();
+  };
+
+  const handleToggleVisibility = async (postId, currentVisibility) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/admin/post/${postId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ isHidden: !currentVisibility }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Lỗi khi cập nhật trạng thái bài viết");
+      }
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId ? { ...post, isHidden: !currentVisibility } : post
+        )
+      );
+    } catch (error) {
+      console.error("Lỗi khi cập nhật bài viết:", error);
+    }
+  };
+
   return (
-    <Box
-    >
+    <Box>
       <Box sx={{ padding: 2 }}>
-        <FlexBetween sx={{ justifyContent: 'center' }}>
+        <FlexBetween sx={{ justifyContent: "center" }}>
           <TextField
             inputRef={inputRef}
             label="Search by Email"
             variant="outlined"
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
-            sx={{ width: '50%' }}
+            sx={{ width: "50%" }}
           />
         </FlexBetween>
         <Typography variant="h6" gutterBottom>
@@ -137,16 +201,30 @@ const Dashboard = () => {
                   <TableCell>{user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <img src={user.picturePath} alt="User" style={{ width: '100px', height: '100px' }} />
+                    {user.picturePath ? (
+                      <img
+                        src={`http://localhost:8080/assets/${user.picturePath}`}
+                        alt="User"
+                        style={{ width: "150px", height: "150px" , borderRadius: "50%" }}
+                      />
+                    ) : (
+                      "Không có avatar"
+                    )}
                   </TableCell>
                   <TableCell>{user.location}</TableCell>
                   <TableCell>{user.occupation}</TableCell>
                   <TableCell>{user.viewedProfile}</TableCell>
                   <TableCell>{user.impressions}</TableCell>
-                  <TableCell>{new Date(user.createdAt).toLocaleString("vi-VN")}</TableCell>
                   <TableCell>
-                    <Button variant="contained" color="secondary" onClick={() => handleDeleteUser(user._id)}>
-                      Delete
+                    {new Date(user.createdAt).toLocaleString("vi-VN")}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleOpenConfirmDialog("user", user._id)}
+                    >
+                      Xoá
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -163,13 +241,11 @@ const Dashboard = () => {
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>ID Người dùng</TableCell>
-                <TableCell>Tên</TableCell>
-                <TableCell>Họ</TableCell>
-                <TableCell>Địa điểm</TableCell>
+                <TableCell>Người đăng</TableCell>
                 <TableCell>Mô tả</TableCell>
                 <TableCell>Đường dẫn ảnh</TableCell>
                 <TableCell>Ngày tạo</TableCell>
+                <TableCell>Trạng thái</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -177,18 +253,45 @@ const Dashboard = () => {
               {posts.map((post) => (
                 <TableRow key={post._id}>
                   <TableCell>{post._id}</TableCell>
-                  <TableCell>{post.userId}</TableCell>
-                  <TableCell>{post.firstName}</TableCell>
-                  <TableCell>{post.lastName}</TableCell>
-                  <TableCell>{post.location}</TableCell>
+                  <TableCell>{`${post.firstName} ${post.lastName}`}</TableCell>
                   <TableCell>{post.description}</TableCell>
-                  <TableCell>
-                    <img src={post.userPicturePath} alt="Post" style={{ width: '100px', height: '100px' }} />
+                  <TableCell sx={{ width: "400px", height: "400px" }}>
+                    {post.picturePath ? (
+                      <img
+                        src={`http://localhost:8080/assets/${post.picturePath}`}
+                        alt="Post"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: "10px",
+                        }}
+                      />
+                    ) : (
+                      "Không có ảnh"
+                    )}
                   </TableCell>
-                  <TableCell>{new Date(post.createdAt).toLocaleString("vi-VN")}</TableCell>
                   <TableCell>
-                    <Button variant="contained" color="secondary" onClick={() => handleDeletePost(post._id)}>
-                      Delete
+                    {new Date(post.createdAt).toLocaleString("vi-VN")}
+                  </TableCell>
+                  <TableCell>{post.isHidden ? "Ẩn" : "Công khai"}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleOpenConfirmDialog("post", post._id)}
+                    >
+                      Xóa
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      color={post.isHidden ? "primary" : "warning"}
+                      onClick={() =>
+                        handleToggleVisibility(post._id, post.isHidden)
+                      }
+                    >
+                      {post.isHidden ? "Hiện bài viết" : "Ẩn bài viết"}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -197,6 +300,29 @@ const Dashboard = () => {
           </Table>
         </TableContainer>
       </Box>
+
+      <Dialog
+        open={openConfirmDialog}
+        onClose={handleCloseConfirmDialog}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">Xác nhận xóa</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            Bạn có chắc chắn muốn xóa{" "}
+            {deleteType === "user" ? "người dùng" : "bài viết"} này không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmDialog} color="primary">
+            Hủy
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary" autoFocus>
+            Xóa
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

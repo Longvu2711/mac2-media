@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
-const postSchema = mongoose.Schema(
+const postSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", 
       required: true,
     },
     firstName: {
@@ -22,9 +23,15 @@ const postSchema = mongoose.Schema(
       type: Map,
       of: Boolean,
     },
-    comments: {
-      type: Array,
-      default: [],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment", 
+      },
+    ],
+    isHidden: {
+      type: Boolean,
+      default: false, 
     },
   },
   { timestamps: true }

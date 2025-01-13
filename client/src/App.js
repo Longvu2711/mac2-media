@@ -9,6 +9,7 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import AdminPage from "scenes/adminPage";
 import Dashboard from "scenes/adminPage/dashBoard";
+import TitleManager from "./TitleManager";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -20,6 +21,7 @@ function App() {
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <TitleManager />
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route

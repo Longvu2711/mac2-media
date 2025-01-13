@@ -49,7 +49,7 @@ const UserWidget = ({ userId, picturePath }) => {
   } = user;
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper sx={{ position: "sticky", top: "0px", zIndex: 10 }}>
 
       <FlexBetween
         gap="0.5rem"

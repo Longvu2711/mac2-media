@@ -47,8 +47,8 @@ const Navbar = () => {
         <Box
           display="flex"
           alignItems="center"
-          justifyContent="center" // Căn giữa cả ảnh và chữ
-          gap="1rem" // Khoảng cách giữa ảnh và chữ
+          justifyContent="center" 
+          gap="1rem" 
         >
           <Box
             component="img"
@@ -72,7 +72,7 @@ const Navbar = () => {
               },
             }}
           >
-            V Social Media
+            Mạng Lotus
           </Typography>
         </Box>
         {isNonMobileScreens && (
@@ -90,9 +90,8 @@ const Navbar = () => {
         )}
       </FlexBetween>
 
-      {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween gap="2rem">
+        <FlexBetween gap="1rem">
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -138,7 +137,6 @@ const Navbar = () => {
         </IconButton>
       )}
 
-      {/* MOBILE NAV */}
       {!isNonMobileScreens && isMobileMenuToggled && (
         <Box
           position="fixed"

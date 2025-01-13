@@ -9,11 +9,11 @@ const LoginPage = () => {
       <Box
         width="100%"
         backgroundColor={theme.palette.background.alt}
-        p="1rem 6%"
+        p="2rem 6%"
         textAlign="center"
       >
         <Typography fontWeight="bold" fontSize="43px" color="primary">
-          V Social Media App 
+          Lotus - Mạng Việt 
         </Typography>
       </Box>
 
@@ -25,7 +25,7 @@ const LoginPage = () => {
         backgroundColor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-            Chào Mừng Đến Với V Social Media
+            Chào Mừng Đến Với Lotus - Mạng Xã Hội Việt Nam
         </Typography>
         <Form />
       </Box>

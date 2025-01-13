@@ -28,7 +28,7 @@ const FriendListWidget = ({ userId }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper m="1rem 0" sx={{ position: "sticky", top: "0px", zIndex: 0 }}>
       <Typography
         color={palette.neutral.dark}
         variant="h5"
@@ -37,7 +37,7 @@ const FriendListWidget = ({ userId }) => {
       >
         Danh sách bạn bè - follower
       </Typography>
-      <Box display="flex" flexDirection="column" gap="1.5rem">
+      <Box display="flex" flexDirection="column" gap="1rem">
         {friends.map((friend) => (
           <Friend
             key={friend._id}
