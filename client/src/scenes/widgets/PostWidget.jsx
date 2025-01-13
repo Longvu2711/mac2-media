@@ -17,14 +17,16 @@ import {
   Snackbar,
   Modal,
   Button,
+  TextField,
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
-import { formatDistanceToNow } from "date-fns"; 
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 
 const PostWidget = ({
   postId,
@@ -38,17 +40,39 @@ const PostWidget = ({
   likes,
   comments,
   isHidden,
-  createdAt, 
+  createdAt,
   updatedAt,
 }) => {
+  const [commentsList, setCommentsList] = useState([]);
   const [isComments, setIsComments] = useState(false);
+  const [newComment, setNewComment] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
+  const loggedInUserName = useSelector((state) => state.user.name);
+  const loggedInUserPicturePath = useSelector((state) => state.user.picturePath); 
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+
+  // const TimeAgo = ({ createdAt }) => {
+  //   const [formattedDate, setFormattedDate] = useState("");
+  
+  //   useEffect(() => {
+  //     const updateTime = () => {
+  //       setFormattedDate(
+  //         formatDistanceToNow(new Date(createdAt), { addSuffix: true, locale: vi })
+  //       );
+  //     };
+  //     updateTime();
+  //     const intervalId = setInterval(updateTime, 60000);
+  //     return () => clearInterval(intervalId);
+  //   }, [createdAt]);
+  
+  //   return <Typography sx={{ color: main, fontSize: "0.875rem" }}>{formattedDate}</Typography>;
+  // };
+  
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -65,6 +89,71 @@ const PostWidget = ({
     });
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/comments/${postId}?page=1&limit=5`
+      );
+      const data = await response.json();
+      setCommentsList(data);
+    } catch (err) {
+      console.error("Lỗi khi tải bình luận:", err);
+    }
+  };
+
+  const handleToggleComments = () => {
+    if (!isComments) {
+      fetchComments();
+    }
+    setIsComments(!isComments);
+  };
+
+  const handleAddComment = async () => {
+    if (newComment.trim() === "") return;
+
+    try {
+      const response = await fetch(`http://localhost:8080/comments`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: postId,
+          userId: loggedInUserId,
+          text: newComment,
+          userName: loggedInUserName,
+          userPicturePath: loggedInUserPicturePath, 
+        }),
+      });
+
+      const data = await response.json();
+      setCommentsList([data, ...commentsList]);
+      setNewComment("");
+      comments.push(data); // Update comment count
+    } catch (err) {
+      console.error("Lỗi khi thêm bình luận:", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        setCommentsList(commentsList.filter((comment) => comment._id !== commentId));
+      } else {
+        console.error("Failed to delete comment");
+      }
+    } catch (err) {
+      console.error("Lỗi khi xóa bình luận:", err);
+    }
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -160,16 +249,24 @@ const PostWidget = ({
             </FlexBetween>
 
             <FlexBetween gap="0.3rem">
-              <IconButton onClick={() => setIsComments(!isComments)}>
+              <IconButton onClick={handleToggleComments}>
                 <ChatBubbleOutlineOutlined />
               </IconButton>
-              <Typography>{comments.length}</Typography>
+              <Typography>{commentsList.length}</Typography>
             </FlexBetween>
           </FlexBetween>
 
-          <IconButton onClick={handleShareClick}>
-            <ShareOutlined />
-          </IconButton>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Typography sx={{ color: main, fontSize: "0.875rem" }}>
+              {formatDistanceToNow(new Date(createdAt), {
+                addSuffix: true,
+                locale: vi,
+              })}
+            </Typography>
+            <IconButton onClick={handleShareClick}>
+              <ShareOutlined />
+            </IconButton>
+          </Box>
 
           <Menu
             anchorEl={anchorEl}
@@ -187,15 +284,50 @@ const PostWidget = ({
 
         {isComments && (
           <Box mt="0.5rem">
-            {comments.map((comment, i) => (
-              <Box key={`${name}-${i}`}>
+            {commentsList.map((comment, i) => (
+              <Box key={comment._id}>
                 <Divider />
-                <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                  {comment}
-                </Typography>
+                <Box display="flex" alignItems="center" gap="0.5rem" pl="1rem" py="0.5rem">
+                  <img
+                    src={`http://localhost:8080/assets/${comment.userPicturePath}`}
+                    alt="user"
+                    style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                  />
+                  <Box flexGrow={1}>
+                    <Typography sx={{ color: main, fontWeight: "bold" }}>
+                      {comment.userName}
+                    </Typography>
+                    <Typography sx={{ color: main, fontSize: "0.75rem" }}>
+                      {formatDistanceToNow(new Date(comment.createdAt), {
+                        addSuffix: true,
+                        locale: vi,
+                      })}
+                    </Typography>
+                    <Typography sx={{ color: main, mt: "0.25rem" }}>{comment.text}</Typography>
+                  </Box>
+                  {comment.userId === loggedInUserId && (
+                    <IconButton onClick={() => handleDeleteComment(comment._id)}>
+                      <Close />
+                    </IconButton>
+                  )}
+                </Box>
               </Box>
             ))}
             <Divider />
+            <Box mt="1rem">
+              <TextField
+                fullWidth
+                label="Thêm bình luận"
+                variant="outlined"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddComment();
+                  }
+                }}
+              />
+            </Box>
           </Box>
         )}
         <Snackbar
@@ -208,13 +340,13 @@ const PostWidget = ({
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        transitionDuration={100} 
+        transitionDuration={100}
         BackdropProps={{
           sx: {
-            backdropFilter: "blur(8px)", 
-            backgroundColor: "rgba(0, 0, 0, 0.5)", 
+            backdropFilter: "blur(8px)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
             transition:
-              "backdrop-filter 0.1s ease-in-out, background-color 0.1s ease-in-out", 
+              "backdrop-filter 0.1s ease-in-out, background-color 0.1s ease-in-out",
           },
         }}
       >
@@ -300,10 +432,10 @@ const PostWidget = ({
               </FlexBetween>
 
               <FlexBetween gap="0.3rem">
-                <IconButton onClick={() => setIsComments(!isComments)}>
+                <IconButton onClick={handleToggleComments}>
                   <ChatBubbleOutlineOutlined />
                 </IconButton>
-                <Typography>{comments.length}</Typography>
+                <Typography>{commentsList.length}</Typography>
               </FlexBetween>
             </FlexBetween>
 
@@ -314,15 +446,50 @@ const PostWidget = ({
 
           {isComments && (
             <Box mt="1rem">
-              {comments.map((comment, i) => (
-                <Box key={`${name}-${i}`}>
+              {commentsList.map((comment, i) => (
+                <Box key={comment._id}>
                   <Divider />
-                  <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                    {comment}
-                  </Typography>
+                  <Box display="flex" alignItems="center" gap="0.5rem" pl="1rem" py="0.5rem">
+                    <img
+                      src={`http://localhost:8080/assets/${comment.userPicturePath}`}
+                      alt="user"
+                      style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                    />
+                    <Box flexGrow={1}>
+                      <Typography sx={{ color: main, fontWeight: "bold" }}>
+                        {comment.userName}
+                      </Typography>
+                      <Typography sx={{ color: main, fontSize: "0.75rem" }}>
+                        {formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
+                      </Typography>
+                      <Typography sx={{ color: main, mt: "0.25rem" }}>{comment.text}</Typography>
+                    </Box>
+                    {comment.userId === loggedInUserId && (
+                      <IconButton onClick={() => handleDeleteComment(comment._id)}>
+                        <Close />
+                      </IconButton>
+                    )}
+                  </Box>
                 </Box>
               ))}
               <Divider />
+              <Box mt="1rem">
+                <TextField
+                  fullWidth
+                  label="Thêm bình luận"
+                  variant="outlined"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddComment();
+                    }
+                  }}
+                />
+              </Box>
             </Box>
           )}
         </Box>

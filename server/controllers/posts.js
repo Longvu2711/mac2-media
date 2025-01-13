@@ -105,17 +105,10 @@ export const likePost = async (req, res) => {
 export const togglePostVisibility = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.id;
 
-    // Find the post by ID
     const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Bài viết không tồn tại" });
-    }
-
-    // Check if the post belongs to the current user
-    if (post.userId !== userId) {
-      return res.status(403).json({ message: "Bạn không có quyền chỉnh sửa bài viết này" });
     }
 
     post.isHidden = !post.isHidden;
@@ -123,7 +116,7 @@ export const togglePostVisibility = async (req, res) => {
 
     res.status(200).json({
       message: `Bài viết đã được ${post.isHidden ? "ẩn" : "hiện"}`,
-      isHidden: post.isHidden,  // Returning the updated visibility status
+      isHidden: post.isHidden, 
     });
   } catch (error) {
     console.error("Error toggling post visibility:", error);

@@ -1,27 +1,25 @@
-import { 
-  PersonAddOutlined, 
-  PersonRemoveOutlined, 
-  Visibility, 
-  VisibilityOff 
+import {
+  PersonAddOutlined,
+  PersonRemoveOutlined,
+  Visibility,
+  VisibilityOff,
+  Public,
+  Lock,
 } from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
 import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 
-const Friend = ({ 
-  friendId, 
-  name, 
-  subtitle, 
-  userPicturePath, 
-  postId, 
-  isHidden: initialHidden, 
-  createdAt 
+const Friend = ({
+  friendId,
+  name,
+  subtitle,
+  userPicturePath,
+  postId, // Lưu ý: chỉ nhận postId nếu bài viết có trạng thái visibility
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +27,7 @@ const Friend = ({
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
   const { palette } = useTheme();
-  const [isHidden, setIsHidden] = useState(initialHidden); 
+  const [isHidden, setIsHidden] = useState(false); // Mặc định bài viết không ẩn
 
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
@@ -37,17 +35,6 @@ const Friend = ({
   const medium = palette.neutral.medium;
 
   const isFriend = friends.find((friend) => friend._id === friendId);
-
-  // 🔹 Chuyển đổi `createdAt` thành định dạng "x thời gian trước"
-  let formattedDate = "";
-  if (createdAt) {
-    const parsedDate = new Date(createdAt);
-    if (!isNaN(parsedDate)) {
-      formattedDate = formatDistanceToNow(parsedDate, { addSuffix: true, locale: vi });
-    } else {
-      formattedDate = "Không xác định";
-    }
-  }
 
   const patchFriend = async () => {
     if (_id === friendId) return;
@@ -70,6 +57,7 @@ const Friend = ({
   };
 
   const handleToggleVisibility = async () => {
+    if (!postId) return; // Chỉ hiển thị visibility nếu có postId
     try {
       const response = await fetch(
         `http://localhost:8080/posts/${postId}/toggle-visibility`,
@@ -84,7 +72,7 @@ const Friend = ({
       if (!response.ok) {
         throw new Error("Lỗi khi cập nhật trạng thái bài viết");
       }
-      setIsHidden((prev) => !prev); 
+      setIsHidden((prev) => !prev);
     } catch (error) {
       console.error("Lỗi khi cập nhật bài viết:", error);
     }
@@ -95,26 +83,67 @@ const Friend = ({
       <FlexBetween gap="1rem">
         <UserImage image={userPicturePath} size="55px" />
         <Box
-          onClick={() => navigate(`/profile/${friendId}`)} 
+          onClick={() => navigate(`/profile/${friendId}`)}
           sx={{
             "&:hover": { cursor: "pointer" },
           }}
         >
-          {/* 🔹 Hiển thị trạng thái bài viết (Công khai / Cá nhân) */}
           <Typography
             color={main}
             variant="h5"
             fontWeight="500"
             sx={{
-              "&:hover": { color: palette.primary.light },
+              display: "flex",
+              alignItems: "center", // Giữ icon và chữ trên cùng một hàng
+              "&:hover": { color: palette.primary.light }, // Hover toàn bộ dòng
+              cursor: "pointer", // Giúp hiển thị dấu trỏ chuột khi hover
             }}
           >
-            {name} {isHidden ? "• Bài viết cá nhân" : "• Bài viết công khai"}
+            {name}
+            {postId && (
+              <Box
+                component="span"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginLeft: "0.5rem",
+                  color: main, // Giữ màu đồng nhất với tên
+                  "&:hover": { color: palette.primary.light }, // Hover thay đổi màu cả trạng thái bài viết
+                }}
+              >
+                {isHidden ? (
+                  <>
+                    <Lock
+                      sx={{
+                        fontSize: "inherit",
+                        verticalAlign: "middle",
+                        marginRight: "0.3rem",
+                      }}
+                    />
+                    <Typography variant="inherit" component="span">
+                      Bài viết cá nhân
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Public
+                      sx={{
+                        fontSize: "inherit",
+                        verticalAlign: "middle",
+                        marginRight: "0.3rem",
+                      }}
+                    />
+                    <Typography variant="inherit" component="span">
+                      Bài viết công khai
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            )}
           </Typography>
 
-          {/* 🔹 Hiển thị địa điểm và thời gian đăng bài */}
           <Typography color={medium} fontSize="1rem">
-            {subtitle} • {formattedDate}
+            {subtitle}
           </Typography>
         </Box>
       </FlexBetween>
@@ -131,16 +160,18 @@ const Friend = ({
           )}
         </IconButton>
       ) : (
-        <IconButton
-          onClick={handleToggleVisibility}
-          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-        >
-          {isHidden ? (
-            <Visibility sx={{ color: primaryDark }} />
-          ) : (
-            <VisibilityOff sx={{ color: primaryDark }} />
-          )}
-        </IconButton>
+        postId && (
+          <IconButton
+            onClick={handleToggleVisibility}
+            sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+          >
+            {isHidden ? (
+              <Visibility sx={{ color: primaryDark }} />
+            ) : (
+              <VisibilityOff sx={{ color: primaryDark }} />
+            )}
+          </IconButton>
+        )
       )}
     </FlexBetween>
   );

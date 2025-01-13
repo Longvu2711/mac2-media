@@ -28,7 +28,7 @@ const FriendListWidget = ({ userId }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <WidgetWrapper m="1rem 0" sx = {{position: "sticky", top: "0px" , zIndex: 1}}>
+    <WidgetWrapper m="1rem 0" sx={{ position: "sticky", top: "0px", zIndex: 10 }}>
       <Typography
         color={palette.neutral.dark}
         variant="h5"
