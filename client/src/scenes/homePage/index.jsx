@@ -11,7 +11,7 @@ import ChatWidget from "scenes/widgets/ChatWidget";
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
-  const apiKey = "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"; // Replace with your actual API key
+  const apiKey = process.env.apiKey; 
 
   return (
     <Box>
