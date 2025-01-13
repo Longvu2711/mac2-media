@@ -203,6 +203,7 @@ const PostWidget = ({
             sx={{
               mt: "1rem",
               fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+              whiteSpace: "pre-wrap", 
             }}
           >
             {description}
@@ -411,8 +412,9 @@ const PostWidget = ({
           <Typography
             color={main}
             sx={{
-              mt: "1rem",
+              mt: "2rem",
               fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" },
+              whiteSpace: "pre-wrap", 
             }}
           >
             {description}
@@ -464,9 +466,17 @@ const PostWidget = ({
               </FlexBetween>
             </FlexBetween>
 
-            <IconButton>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Typography sx={{ color: main, fontSize: "1rem" }}>
+              {formatDistanceToNow(new Date(createdAt), {
+                addSuffix: true,
+                locale: vi,
+              })}
+            </Typography>
+            <IconButton onClick={handleShareClick}>
               <ShareOutlined />
             </IconButton>
+          </Box>
           </FlexBetween>
 
           {isComments && (
@@ -506,11 +516,11 @@ const PostWidget = ({
                           {comment.userName}
                         </Typography>
                         <Typography sx={{ color: medium, fontSize: "0.75rem" }}>
-                          {formatDistanceToNow(new Date(comment.createdAt), {
-                            addSuffix: true,
-                            locale: vi,
-                          })}
-                        </Typography>
+                        {formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
+                      </Typography>
                       </Box>
                       <Typography sx={{ color: main, mt: "0.25rem" }}>
                         {comment.text}

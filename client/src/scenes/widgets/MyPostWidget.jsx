@@ -1,17 +1,14 @@
 import {
   EditOutlined,
   DeleteOutlined,
-  AttachFileOutlined,
   GifBoxOutlined,
   ImageOutlined,
-  MicOutlined,
   MoreHorizOutlined,
 } from "@mui/icons-material";
 import {
   Box,
   Divider,
   Typography,
-  InputBase,
   useTheme,
   Button,
   IconButton,
@@ -30,6 +27,7 @@ const MyPostWidget = ({ picturePath }) => {
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
@@ -38,6 +36,8 @@ const MyPostWidget = ({ picturePath }) => {
   const medium = palette.neutral.medium;
 
   const handlePost = async () => {
+    if (!post && !image) return; 
+
     const formData = new FormData();
     formData.append("userId", _id);
     formData.append("description", post);
@@ -61,26 +61,32 @@ const MyPostWidget = ({ picturePath }) => {
     <WidgetWrapper>
       <FlexBetween gap="1.5rem">
         <UserImage image={picturePath} />
-        <InputBase
+        <textarea
           placeholder="Bạn muốn viết gì đó không?..."
           onChange={(e) => setPost(e.target.value)}
           value={post}
-          sx={{
-            fontSize: "1.25rem",
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault(); // Ngăn Enter tạo dòng mới
+              handlePost(); // Gửi bài viết
+            }
+          }}
+          style={{
+            fontSize: "1rem",
             width: "100%",
             backgroundColor: palette.neutral.light,
             borderRadius: "1rem",
-            padding: "1rem 1rem",
+            padding: "1rem",
+            resize: "none",
+            height: isFocused ? "10rem" : "5rem",
+            transition: "height 0.3s ease",
           }}
         />
       </FlexBetween>
       {isImage && (
-        <Box
-          border={`1px solid ${medium}`}
-          borderRadius="5px"
-          mt="1rem"
-          p="1rem"
-        >
+        <Box border={`1px solid ${medium}`} borderRadius="5px" mt="1rem" p="1rem">
           <Dropzone
             acceptedFiles=".jpg,.jpeg,.png,.gif,.mp4,.mp3,.mov,.webp"
             multiple={false}
@@ -95,13 +101,8 @@ const MyPostWidget = ({ picturePath }) => {
                   width="100%"
                   sx={{ "&:hover": { cursor: "pointer" } }}
                 >
-                  <input
-                    {...getInputProps()}
-                    accept=".jpg,.jpeg,.png,.gif,.mp4,.mp3,.mov,.webp" 
-                  />
-                  {!image ? (
-                    <p>Chọn ảnh hoặc kéo thả vào đây</p>
-                  ) : (
+                  <input {...getInputProps()} accept=".jpg,.jpeg,.png,.gif,.mp4,.mp3,.mov,.webp" />
+                  {!image ? <p>Chọn ảnh hoặc kéo thả vào đây</p> : (
                     <FlexBetween>
                       <Typography>{image.name}</Typography>
                       <EditOutlined />
@@ -109,10 +110,7 @@ const MyPostWidget = ({ picturePath }) => {
                   )}
                 </Box>
                 {image && (
-                  <IconButton
-                    onClick={() => setImage(null)}
-                    sx={{ width: "15%" }}
-                  >
+                  <IconButton onClick={() => setImage(null)} sx={{ width: "15%" }}>
                     <DeleteOutlined />
                   </IconButton>
                 )}
@@ -125,35 +123,19 @@ const MyPostWidget = ({ picturePath }) => {
       <FlexBetween>
         <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
           <ImageOutlined sx={{ color: mediumMain, fontSize: "2rem" }} />
-          <Typography
-            color={mediumMain}
-            sx={{ "&:hover": { cursor: "pointer", color: medium } }}
-          >
+          <Typography color={mediumMain} sx={{ "&:hover": { cursor: "pointer", color: medium } }}>
             Ảnh
           </Typography>
         </FlexBetween>
 
         {isNonMobileScreens ? (
           <>
-           <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-           <GifBoxOutlined sx={{ color: mediumMain, fontSize: "2rem" }} />
-           <Typography
-            color={mediumMain}
-            sx={{ "&:hover": { cursor: "pointer", color: medium } }}
-          >
-            Ảnh động
-          </Typography>
-        </FlexBetween>
-
-            {/* <FlexBetween gap="0.25rem">
-              <AttachFileOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Đính kèm tệp</Typography>
-            </FlexBetween> */}
-
-            {/* <FlexBetween gap="0.25rem">
-              <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Âm thanh</Typography>
-            </FlexBetween> */}
+            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
+              <GifBoxOutlined sx={{ color: mediumMain, fontSize: "2rem" }} />
+              <Typography color={mediumMain} sx={{ "&:hover": { cursor: "pointer", color: medium } }}>
+                Ảnh động
+              </Typography>
+            </FlexBetween>
           </>
         ) : (
           <FlexBetween gap="0.25rem">

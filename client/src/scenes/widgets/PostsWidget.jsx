@@ -66,10 +66,10 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   return (
     <>
       {!isProfile && (
-        <WidgetWrapper m="1rem 0">
-          <Box mb="0.5rem">
+        <WidgetWrapper m="1rem 0" sx={{ position: "sticky", top: "0px", zIndex: 2 }}>
+          <Box mb="0.5rem" >
             {" "}
-            <FlexBetween>
+            <FlexBetween >
               <Typography variant="h5" fontWeight="500">
                 {showFriendsPosts ? "Bài đăng của bạn bè" : "Tất cả bài đăng"}
               </Typography>
