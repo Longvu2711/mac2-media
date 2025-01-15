@@ -82,7 +82,7 @@ const PostWidget = ({
   const fetchComments = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/comments/${postId}?page=1&limit=5`
+        `http://localhost:8080/comments/${postId}`
       );
       const data = await response.json();
       setCommentsList(data);
@@ -103,7 +103,7 @@ const PostWidget = ({
   };
 
   const handleAddComment = async () => {
-    if (newComment.trim() === "") return;
+    if (newComment === "") return;
 
     try {
       const response = await fetch(`http://localhost:8080/comments`, {
@@ -391,7 +391,8 @@ const PostWidget = ({
             outline: "none",
             overflowY: "auto",
             maxHeight: "800px",
-            padding: "3rem",
+            padding: "7rem",
+            scrollBehavior: "smooth", 
           }}
         >
           <IconButton
@@ -495,8 +496,8 @@ const PostWidget = ({
                       src={`http://localhost:8080/assets/${comment.userPicturePath}`}
                       alt="user"
                       style={{
-                        width: "30px",
-                        height: "30px",
+                        width: "50px",
+                        height: "50px",
                         borderRadius: "50%",
                         cursor: "pointer",
                       }}
@@ -512,17 +513,17 @@ const PostWidget = ({
                         }}
                         onClick={() => navigate(`/profile/${comment.userId}`)}
                       >
-                        <Typography sx={{ color: main, fontWeight: "bold" }}>
+                        <Typography sx={{ color: main, fontWeight: "bold",fontSize: "1rem" }}>
                           {comment.userName}
                         </Typography>
-                        <Typography sx={{ color: medium, fontSize: "0.75rem" }}>
+                        <Typography sx={{ color: medium, fontSize: "1rem" }}>
                         {formatDistanceToNow(new Date(comment.createdAt), {
                           addSuffix: true,
                           locale: vi,
                         })}
                       </Typography>
                       </Box>
-                      <Typography sx={{ color: main, mt: "0.25rem" }}>
+                      <Typography sx={{ color: main, mt: "0.2rem" ,fontSize: "1.25rem"}}>
                         {comment.text}
                       </Typography>
                     </Box>

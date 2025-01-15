@@ -54,7 +54,7 @@ const HomePage = () => {
           </Box>
         )}
       </Box>
-      <ChatWidget apiKey={apiKey} />
+      {/* <ChatWidget apiKey={apiKey} /> */}
     </Box>
   );
 };

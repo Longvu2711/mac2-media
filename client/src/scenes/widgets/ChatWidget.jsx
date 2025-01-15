@@ -54,6 +54,7 @@ const ChatWidget = ({ apiKey }) => {
         boxShadow: 3,
         overflow: "hidden",
         transition: "width 0.3s, height 0.3s", 
+        zIndex: 11,
       }}
       onClick={() => !isOpen && setIsOpen(true)} 
     >

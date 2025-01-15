@@ -70,18 +70,28 @@ const Form = () => {
     }
     formData.append("picturePath", values.picture.name);
 
-    const savedUserResponse = await fetch(
-      "http://localhost:8080/auth/register",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-    const savedUser = await savedUserResponse.json();
-    onSubmitProps.resetForm();
+    try {
+      const savedUserResponse = await fetch(
+        "http://localhost:8080/auth/register",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    if (savedUser) {
-      setPageType("login");
+      if (!savedUserResponse.ok) {
+        throw new Error("Đăng ký thất bại! Vui lòng thử lại.");
+      }
+
+      const savedUser = await savedUserResponse.json();
+      onSubmitProps.resetForm();
+
+      if (savedUser) {
+        alert("🎉 Đăng ký thành công! Vui lòng đăng nhập.");
+        setPageType("login");
+      }
+    } catch (error) {
+      alert(`❌ Lỗi: ${error.message}`);
     }
   };
 
