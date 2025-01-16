@@ -393,6 +393,7 @@ const PostWidget = ({
             maxHeight: "800px",
             padding: "7rem",
             scrollBehavior: "smooth", 
+            borderWidth: "10px",
           }}
         >
           <IconButton

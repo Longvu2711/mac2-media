@@ -10,6 +10,8 @@ import { themeSettings } from "./theme";
 import AdminPage from "scenes/adminPage";
 import Dashboard from "scenes/adminPage/dashBoard";
 import TitleManager from "./TitleManager";
+import { Home } from "@mui/icons-material";
+import EditProfilePage from "scenes/profilePage/EditProfilePage";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -31,6 +33,10 @@ function App() {
             <Route
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/profile/:userId/edit"
+              element={isAuth ? <EditProfilePage /> : <Navigate to="/" />}
             />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/admin/dashboard" element={<Dashboard />} />

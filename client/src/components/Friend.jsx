@@ -50,14 +50,17 @@ const Friend = ({
         }
       );
       const data = await response.json();
-      dispatch(setFriends({ friends: data }));
+  
+      if (data) {
+        dispatch(setFriends({ friends: data }));
+      }
     } catch (error) {
       console.error("Lỗi khi cập nhật danh sách bạn bè:", error);
     }
   };
 
   const handleToggleVisibility = async () => {
-    if (!postId) return; // Chỉ hiển thị visibility nếu có postId
+    if (!postId) return; 
     try {
       const response = await fetch(
         `http://localhost:8080/posts/${postId}/toggle-visibility`,

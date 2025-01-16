@@ -7,11 +7,20 @@ import PostsWidget from "scenes/widgets/PostsWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 import ChatWidget from "scenes/widgets/ChatWidget";
+import React, { useState } from 'react';
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath } = useSelector((state) => state.user);
-  const apiKey = process.env.apiKey; 
+  const [selectedFriendId, setSelectedFriendId] = useState(null);
+
+  const handleSelectFriend = (friendId) => {
+    setSelectedFriendId(friendId);
+  };
+
+  const handleCloseChat = () => {
+    setSelectedFriendId(null);
+  };
 
   return (
     <Box>
@@ -50,11 +59,11 @@ const HomePage = () => {
           <Box flexBasis="26%">
             <AdvertWidget />
             <Box m="1rem 0" />
-            <FriendListWidget userId={_id} />
+            <FriendListWidget userId={_id} onSelectFriend={handleSelectFriend} />
           </Box>
         )}
       </Box>
-      {/* <ChatWidget apiKey={apiKey} /> */}
+      {selectedFriendId && <ChatWidget selectedFriendId={selectedFriendId} onClose={handleCloseChat} />}
     </Box>
   );
 };

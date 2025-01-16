@@ -32,7 +32,14 @@ const UserWidget = ({ userId, picturePath }) => {
 
   useEffect(() => {
     getUser();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userId]); 
+
+  const updateProfilePicture = (newPicturePath) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      picturePath: newPicturePath, 
+    }));
+  };
 
   if (!user) {
     return null;
@@ -50,14 +57,13 @@ const UserWidget = ({ userId, picturePath }) => {
 
   return (
     <WidgetWrapper sx={{ position: "sticky", top: "0px", zIndex: 10 }}>
-
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"
         onClick={() => navigate(`/profile/${userId}`)}
       >
         <FlexBetween gap="1rem">
-          <UserImage image={picturePath} />
+          <UserImage image={picturePath} size="60px"  />
           <Box>
             <Typography
               variant="h4"
@@ -80,7 +86,6 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-{/* //dong 2 */}
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
           <LocationOnOutlined fontSize="large" sx={{ color: main }} />
@@ -93,7 +98,6 @@ const UserWidget = ({ userId, picturePath }) => {
       </Box>
 
       <Divider />
-
 
       <Box p="1rem 0">
         <FlexBetween mb="0.5rem">
@@ -112,8 +116,6 @@ const UserWidget = ({ userId, picturePath }) => {
 
       <Divider />
 
-{/* //dong 4 */}
-{/* test icon  */}
       <Box p="1rem 0">
         <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
           Các tài khoản khác
@@ -146,7 +148,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
         <FlexBetween gap="1rem" mb="0.5rem">
           <FlexBetween gap="1rem">
-            <img src="../assets/facebook.png" alt="zalo" />
+            <img src="../assets/facebook.png" alt="facebook" />
             <Box>
               <Typography color={main} fontWeight="500">
                 Facebook
@@ -156,20 +158,6 @@ const UserWidget = ({ userId, picturePath }) => {
           </FlexBetween>
           <EditOutlined sx={{ color: main }} />
         </FlexBetween>
-
-{/* //test icon. no need now */}
-        {/* <FlexBetween gap="1rem">
-          <FlexBetween gap="1rem">
-            <img src="../assets/linkedin.png" alt="linkedin" />
-            <Box>
-              <Typography color={main} fontWeight="500">
-                Linkedin
-              </Typography>
-              <Typography color={medium}>Network Platform</Typography>
-            </Box>
-          </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
-        </FlexBetween> */}
       </Box>
     </WidgetWrapper>
   );

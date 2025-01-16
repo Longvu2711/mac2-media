@@ -57,7 +57,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     } else {
       getPosts();
     }
-  }, [showFriendsPosts]);
+  }, [showFriendsPosts, isProfile, token]);
 
   const sortedPosts = [...posts].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)

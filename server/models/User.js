@@ -38,6 +38,7 @@ const UserSchema = new mongoose.Schema(
     occupation: String,
     viewedProfile: Number,
     impressions: Number,
+    socketId: { type: String, default: "" },  
   },
   { timestamps: true }
 );
